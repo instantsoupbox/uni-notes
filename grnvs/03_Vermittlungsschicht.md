@@ -3,17 +3,26 @@ KAP 3 - Vermittlungsschicht
 Die Vermittlungsschicht soll mehrere unterschiedliche Direktverbindungsnetze miteinander koppeln. Ausserdem sollen kleine Gruppen an Geräten in kleinere **Subnetze** gruppiert und strukturiert aufgeteilt werden. Diese Geräte sollen logisch und global eindeutig adressierbar sein und über mehrere Geräte hinweg soll eine Wegwahl möglich sein. 
 
 Die Hauptaufgabe der Vermittlungsschicht (Schicht 3) ist es, Pakete von der Ursprungsmaschine an die Ziel-Maschine zu routen.
+***
 
 ## Vermittlungsarten
-***
 <details>
     <summary>Aufgaben der Vermittlungsschicht</summary>
-    Kopplung untersch. Direktverbindungsnetze, Struktur. Aufteilung in kleinere Subnetze, log., global eindeutige Adressierung von Geräten, Wegwahl zw. Geräten über mehrere Hops hinweg
+    <ul>
+        <li>Kopplung untersch. Direktverbindungsnetze</li>
+        <li>Struktur. Aufteilung in kleinere Subnetze</li>
+        <li>logische, global eindeutige Adressierung von Geräten</li>
+        <li>Wegwahl zw. Geräten über mehrere Hops hinweg</li>
+    </ul>
 </details>
 
 <details>
     <summary>Vermittlungsarten</summary>
-    Leitungsvermittlung, Nachrichtenvermittlung, Paketvermittlung
+    <ul>
+        <li>Leitungsvermittlung</li>
+        <li>Nachrichtenvermittlung</li>
+        <li>Paketvermittlung</li>
+    </ul>
 </details>
 
 ### Aufgaben der Vermittlungsschicht
@@ -26,9 +35,17 @@ Die Hauptaufgabe der Vermittlungsschicht (Schicht 3) ist es, Pakete von der Ursp
 Reserviere eine dedizierte Leitung zwischen Sender und Empfänger
 
 Phasen während einer verbindungsorientierten Übertragung:
-   1. Verbindungsaufbau: Austausch von **Signalisierungsnachrichten** zum Aufbau einer dedizierten Verbindung zwischen S und E (Wegwahl!)
-   2. Datenaustausch: Exklusive Nutzung des Kanals durch Kommunikationspartner, keine Adressierung nötig (Punkt-zu-Punkt-Verbindung)
-   3. Verbindungsabbau: **Signalisierungsnachrichten** zum Abbau der Verbindung, Freigabe der Ressourcen für nachfolgende Verbindungen
+   1. Verbindungsaufbau:
+    
+      Austausch von **Signalisierungsnachrichten** zum Aufbau einer dedizierten Verbindung zwischen S und E (Wegwahl!)
+
+   2. Datenaustausch: 
+   
+      Exklusive Nutzung des Kanals durch Kommunikationspartner, keine Adressierung nötig (Punkt-zu-Punkt-Verbindung)
+
+   3. Verbindungsabbau: 
+      
+      Austausch von **Signalisierungsnachrichten** zum Abbau der Verbindung, Freigabe der Ressourcen für nachfolgende Verbindungen
 
 | Vorteile      | Nachteile   |
 | ------------- |---------------|
@@ -57,11 +74,11 @@ Für jedes Paket - einen eigenen Header (Informationen zur Weiterleitung und Rea
 
 #### Multiplexing auf Paketebene
 Engpässe werden fairer genutzt, da nur kleine Pakete vermittelt werden. Bei Paketverlust müssen nur Teile einer größeren Nachricht wiederholt werden. 
+***
 
 ## Adressierung im Internet
 
-***
-### IPv4:
+### IPv4
 Länge: 32 bits (4 Bytes)
 
 Dotted-decimal notation, jedes Byte der Adresse wird mit einem Punkt getrennt
@@ -74,8 +91,6 @@ MAC-Adressen dienen zur Adressierung innerhalb eines Direktverbindungsnetzes und
 
 IP-Adressen dienen der End-zu-End-Adressierung zwischen mehreren Direktverbindungsnetzen und werden beim Routing nicht verändert. 
 
-Vor dem Versenden von Daten müssen Daten aus dem Host-Byte Order in Network Byte Order (Big Endian) konvertiert werden, dies muss auch beim Empfang von Daten durchgeführt werden. 
-
 Ein Router muss adressierbar sein und verfügt auf jedem Interface über eine eigene MAC-Adresse, sowie eine eigene IP-ADresse. 
 
 Offene Probleme:
@@ -85,20 +100,78 @@ Offene Probleme:
 * **Longest-Prefix-Matching, Border Gateway Protocol Path Selection**: Wie ermittelt der R den Weg ans Ziel, wenn er mehrere Wege kennt?
 * **Classful Routing, Classless Routing, Subnetting**: Unterteilung der IP-Adresse in Netz- und Hostanteil
 
+#### HEADERFORMAT
+Die Länge des IP-Headers muss ein Vielfaches von 4B betragen!
+
+Vor dem Versenden von Daten müssen Daten aus dem Host-Byte Order in Network Byte Order (Big Endian) konvertiert werden, dies muss auch beim Empfang von Daten durchgeführt werden. 
+
+1. Version: 
+    
+    Verwendete IP-Version
+
+2. IHL := IP-Header Length
+
+    Länge des IP-Headers **in Vielfachen von 32 bit**. Dies ist wichtig, da der IPv4-Header durchOptionsfelder eine variable Länge hat.
+
+3. TOS := Type of Service
+
+    Zur Klassifizierung und Priorisierung von Paketen und bietet die Möglichkeit zur Staukontrolle
+
+4. Total Length 
+
+    Gesamtlänge des IP-Pakets (Header + Daten) **in Bytes**. Es gibt eine maximale Paketlänge, sodass keine Fragmentierung notwendig ist. Diese bezeichnet man als MTU (Maximum-Transmission Unit). Diese hängt von Schicht 2/1 ab und beträgt 1500 B für FastEthernet.
+
+5. Identification
+
+    Zufällig gewählter 16 bit langer Wert und dient zur Identifikation zusammengehörtiger Fragmente.
+
+6. Flags
+
+    Aussage über fragmentierbarkeit. 
+    * Bit 16: RES - Reserviert und wird auf 0 gesetzt.
+    * Bit 17: DF := Don't fragment
+    * Bit 18: MF := More Fragments - `1` für "es kommen noch mehr Fragmente", `0` für "nein"/"unfragmentiert"
+
+7. Fragment Offset
+    * Absolute Position der Daten in diesem Fragment bezogen auf das unfragmentierte Paket **in ganzzahligen Vielfachen von 8B**
+    * **Reassemblieerung der fragmentierten Pakete in der richtigen Reihenfolge** ist zusammen mit Identifier und MF-Bit (s. 6. Flags) möglich.
+
+8. TTL := Time to Live
+    * Wird um 1 dekrementiert, wenn ein Router ein IP-Paket weiterleitet.
+    * Wenn ein Router ein Paket mit `TTL = 1` bekommt, so wird es verworfen und eine Benachrichtigung wird an den Absender gesendet (ICMP Time Exceeded)
+    * Verhinderung von **Routing Loops** (endlos kreisende Pakete)
+
+9. Protocol
+    * Identifikation des Protokolls auf Schicht 4 (Transportschicht), das im Payload des IP-Packets enthalten ist. 
+    * TCP: `0x06`
+    * UDP: `0x11`
+
+10. Header Checksum
+    * Schützt nur den IP Header (einfach, geschwindigkeitsoptimiert)
+    * Lediglich Fehlererkennung (aber keine Korrektur!)
+
+11. Source Address (IP des Absenders, duh)
+
+12. Destination Address (IP des Empfängers)
+
+13. Options / Padding
+
 #### ADRESSAUFLÖSUNG (Bestimmung der MAC-Adresse des Next-Hops)
 **ARP (Address Resolution Protocol)** 
-1. **ARP-Request** - (Who hast dest-ip? Tell source-ip at source-mac.) an MAC-Broadcast-Adresse ff:ff:ff:ff:ff:ff
-2. **ARP-Reply** - (Dest-ip is at dest-mac.) an MAC-Unicast-Adresse
+1. **ARP-Request** - (Who hast `dest-ip`? Tell `source-ip` at `source-mac`.) gesendet an MAC-Broadcast-Adresse `ff:ff:ff:ff:ff:ff`
+2. **ARP-Reply** - (`Dest-ip` is at `dest-mac`.) an MAC-Unicast-Adresse
 
 Das Ergebnis einer Adressauflösung wird i.d.R. im **ARP-Cache** eines Hosts zwischengespeichert, um nicht bei jedem zu versendenen Paket erneut eine Adressauflösung durchführen zu müssen. 
 
 (Genaues Schema: Folie 46)
 
 #### Internet Control Message Protocol (ICMP)
-IP-Protokoll unterstützt das Senden von Paketen an Ziel-Hosts. Das Internet Control Message Protocol dient dazu, den Absender über Probleme zu benachrichten, die auf dem Weg zum Empfänger auftreten könnten. Z. B. kann das Paket auf dem Weg zum Ziel in eine Routing-Schleife geraten
+IP-Protokoll unterstützt das Senden von Paketen an Ziel-Hosts. Das Internet Control Message Protocol dient dazu, den Absender über Probleme zu benachrichten, die auf dem Weg zum Empfänger auftreten könnten (z.B. Routing-Loops)
 
-
-* Benachrichtigung des Absenders über ein Problem (Routing-Schleife, Router kennt kein Weg zum Zielsetz, letzter Router zum Ziel kann die MAC-Adresse des Empfängers nicht auflösen)
+* Benachrichtigung des Absenders über ein Problem: 
+    * Routing-Schleife
+    * Router kennt kein Weg zum Ziel
+    * letzter Router zum Ziel kann die MAC-Adresse des Empfängers nicht auflösen)
 * Zusätzliche Möglichkeiten:
     * **Ping**: Zur  Überpfüfung der Erreichbarkeit von Hosts (Host1 an Host2)
         * **ICPM-Echo-Request**: 16 bit Identifier, Sequence Number wird für jeden gesendeten Echo-Request um eins dekrementiert
@@ -107,19 +180,36 @@ IP-Protokoll unterstützt das Senden von Paketen an Ziel-Hosts. Das Internet Con
         * Bei fehlgeschlagener Weiterleitung wird eine ICPM-Nachricht mit Fehlercode an Host1 zurückschickt
     * **Redirect**: Umleitung von Paketen
 
-* **ICMP Time Exceeded**: TTL-Feld wird bei der Weiterleitung eines Pakets um eins dekrementiert. Sobald es den Wert 0 erreicht, so wird das betroffene Paket verworfe. Der R generiert ein ICMP Time Exceeded und schickt es an den Absender des verworfenen Pakets zurück. 
+    * **ICMP Time Exceeded**: 
+        * TTL-Feld wird bei der Weiterleitung eines Pakets um eins dekrementiert. 
+        * Sobald es den Wert 0 erreicht, so wird das betroffene Paket verworfen. Also wenn das Paket mit `TTL = 1` beim R ankommt.
+        * Der R generiert ein ICMP Time Exceeded und schickt es an den Absender des verworfenen Pakets zurück. 
 
-* **Traceroute**
-    * Schrittweise Erhöhung des TTL-Felds um 1 entlang des Pfads von Host1 nach Host2
-    * Router verwerfen die Pakete schrittweise und senden jeweils ein TTL-Exceeded an Host1 zurück. 
-    * Pfad zu Host2 kann anhand der IP-Quelladresse Fehlernachrichten nachvollziehen
+    * **Traceroute**
+        * TTL wird zu Beginn auf 1 gesetzt
+        * Schrittweise Erhöhung des TTL-Felds um 1 entlang des Pfads von Host1 nach Host2
+        * Router verwerfen die Pakete schrittweise und senden jeweils ein TTL-Exceeded an Host1 zurück. 
+        * Pfad zu Host2 kann anhand der IP-Quelladresse der Fehlernachrichten nachvollzogen werden
 
 #### Dynamic Host Configuration Protocol (DHCP)
-Dynamische Zuweisung von IP-Adressen an Hosts durch einen **DHCP-Server**, da man will dies nicht per Hand durchführen.
+Dynamische Zuweisung von IP-Adressen an Hosts durch einen **DHCP-Server**, da man dies nicht per Hand durchführen will.
 
 Die durch den DHCP-Server zugewiesene Adresse ist in ihrer Gültigkeit zeitlich begrenzt. Clients erneuern ihr Lease in regelmäßigen Abständen beim DCHP-Server
 
 Ablauf:
+    
+    Client                        Server
+    |                                  |
+     --------- DHCP-Discover --------->
+    |                                  |
+     <--------- DHCP-Offer ------------
+    |                                  |
+     --------- DHCP-Request ---------->
+    |                                  |
+     <-------- DHCP-ACK/NACK ----------
+    |                                  |
+    v                                  v
+
 1. Client sendet **DHCP-Discover** (Layer 2 Broadcast)
 2. DHCP-Server antwortet mit **DHCP-Offer**, bietet dem Client eine IP-Adresse an
 3. C antwortet mit **DHCP-Request**, fordert die angebotene Adresse an
@@ -146,20 +236,63 @@ IP && Subnetzmaske = Netzwerkadresse
 
 
 ### IPv6
-Hinweise zur Notation:
-Beispiel:
-2001:0db8:0000:0000:0001:0000:0000:0001
+* Die Adressen sind nun `128 bit` lang. 
+* Headerformat wurde vereinfacht
+* Änderung bei der IP-Fragmentierung
+* **Extension-Header** ermöglichst Flexibilität
+* **SLAAC** (Stateless Address Autoconfiguration) mittels ICMPv6 (Internet Control Message Protocol)
+* **Stateful Autoconfiguration** durch DHCPv6
+* **Multicast**-Einsatz, um alle Router in einem Segment zu adressieren
+
+Beispiel und Hinweise zur IPv6-Adress-Notation:
+
+    // Colon-separated hexadecimal notation
+    2001:0db8:0000:0000:0001:0000:0000:0001   // unabgekuerzt
+    2001: db8:   0:   0:   1:   0:   0:   1   // Schritt 1.
+    2001:db8:0:0:1:0:0:1   
+    2001:db8  :: 1:0:0:1                      // Schritt 2., 3., 4.
+    2001:db8::1:0:0:1                         // Viel kürzer
 
 1. Weglassen von führenden Nullen in den einzelnen Blöcken
-2001:db8:0:0:1:0:0:1
 
 2. Höchstens 1 Gruppe konsekutiver 0er-Blöcke können abgekürzt werden!
-2001:db8::1:0:0:1
 
 3. Bei mehreren Möglichkeiten bei 2. wählt man die längste Sequenz von Nullen. Bei mehreren gleichlangen Seq. wählt man die 1. Möglichkeit! Dies haben wir in 2. bereits getan
 
 4. Ein einzelner 0er-Block darf nicht mit :: abgekürzt werden
 
+#### HEADERFORMAT
+Die Länge des IPV6-Headers inkl. seiner Extension Header muss immer ein Vielfaches von `8B` sein. 
+1. Version
+
+2. Traffic-Class:
+    
+    Verwendung zur Verkehrspriorisierung / Quality of Service
+
+3. Flow-Label:
+
+    * Zur Erkennung zusammengehöriger Pakete (Flows) auf Schicht 3
+    * Gleichbehandlung von zum selben Flow gehörigen Paketen (z.B. Routing über den selben Pfad)
+
+4. Payload Length:
+    * Länge der auf den IPv6-Header folgenden Daten **in Vielfachen von `1B`**
+
+5. Next Header:
+    * Typ des nächsten Headers:
+         * L4-Header: (TCP / UDP)
+         * ICMPv6-Header
+         * IPv6 Extension Header
+
+6. Hop Limit
+    * analog zum TTL-Header
+    * ICMPv6 Time Exceeded, falls Wert 0 erreicht wird
+
+7. Source Address
+
+9. Destination Address
+
+#### IPv6 Extension Header
+Diese erlauben es, zusätzliche Layer 3 Informationen in einem extra IPv6 Paket anzufügen. 
 
 #### Adressierungsarten auf Schicht 3/2
 1. **Unicast**
@@ -175,8 +308,17 @@ Beispiel:
 4. **Anycast** 
     * Adressierung an eine beliebige Station einer bestimmten Gruppe
 
+#### ICMPv6 HEADERFORMAT
+1. Type:
+      
+      Art der ICMP-Nachricht (z.B. Echo, Time Exceeded usw.)
+
+2. Code:
+
+      Type der ICMP-Nachricht (z.B. Response / Request für ICMP-Echo)
+
 #### Neighbor Discovery Procotocol (NDP)
-* ND ist ein Bestandteil von ICMPv6
+NDP ist ein Bestandteil von ICMPv6. Dessen Funktionen sind beispielsweise:
 * **Neighbor Solicitations**, **Advertisements**
     * Adressauflösung
     * Duplicate Address Detection
@@ -188,8 +330,10 @@ Beispiel:
 * **Redirects**: Umleitung zu anderen Gateways
 
 * Neighbor Solicitation (Request)
+    * ICMPv6 Header: ICMPv6 Type und Code
+    * Neighbor Discovery Body
+    * Neighbor Discovery Options
 * Neighbor Advertisement (Reply)
-
 
 ## Wegwahl (Routing)
 
