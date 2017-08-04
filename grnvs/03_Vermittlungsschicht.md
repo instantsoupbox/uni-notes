@@ -294,6 +294,23 @@ Die Länge des IPV6-Headers inkl. seiner Extension Header muss immer ein Vielfac
 #### IPv6 Extension Header
 Diese erlauben es, zusätzliche Layer 3 Informationen in einem extra IPv6 Paket anzufügen. 
 
+##### IPv6 FRAGMENTATION HEADERFORMAT
+1. Next Header
+
+     Nächster Extension-Header oder verwendetes Layer 4 Protokoll
+
+2. Reserved
+
+     Hat derzeit beim Fragmentation Header keine Bedeutung
+
+3. Fragment Offset
+
+     Offset der fragmentierten L3-SDU in Vielfachen von `8B`
+
+4. MF := More Fragments
+
+     Folgen auf das aktuelle Paket noch mehr Fragmente? Oder handelt es sich um das letzte Fragment gemäß Fragment Offset?
+
 #### Adressierungsarten auf Schicht 3/2
 1. **Unicast**
     * Adressierung von Paketen nur an ein einziges Ziel
@@ -316,6 +333,12 @@ Diese erlauben es, zusätzliche Layer 3 Informationen in einem extra IPv6 Paket 
 2. Code:
 
       Type der ICMP-Nachricht (z.B. Response / Request für ICMP-Echo)
+
+3. Checksum
+
+      Fehlererkennende Checksumme (IPv6-Pseudo-Header)
+
+4. Payload
 
 #### Neighbor Discovery Procotocol (NDP)
 NDP ist ein Bestandteil von ICMPv6. Dessen Funktionen sind beispielsweise:
