@@ -93,6 +93,7 @@ Jetzt gibt es zwei Möglichkeiten zum Umgang mit Segment-Verlusten:
 
 #### Flusskontrolle / Flow control
 * Laststeuerung durch den Empfänger
+
 * Beim Empfänger sollen Überlastsituationen vermieden werden durch Vorgabe einer maximalen Größe des Sendefensters für den S durch den E.
 
 #### Transmission Control Protocol (TCP)
@@ -102,19 +103,19 @@ Verwendete Verfahren:
 
 ##### TCP HEADERFORMAT
 
-1. Quellport
+1. **Quellport**
 
-2. Zielport
+2. **Zielport**
 
-3. Sequenznummer
+3. **Sequenznummer**
 
-4. Bestätigungsnummer: Bestätigung einzelner Bytes anstatt ganzer Segmente (stromorientierte Übertragung)
+4. **Bestätigungsnummer**: Bestätigung einzelner Bytes anstatt ganzer Segmente (stromorientierte Übertragung)
 
-5. (Data) Offset: Länge des TCP-Headers in Vielfachen von `4B`
+5. **(Data) Offset**: Länge des TCP-Headers in Vielfachen von `4B`
 
-6. Reserved: Auf 0 gesetzt, sodass künftige TCP-Versionen dies nutzen können.
+6. **Reserved**: Auf 0 gesetzt, sodass künftige TCP-Versionen dies nutzen können.
 
-7. Flags 
+7. **Flags** 
 
     * URG: Die Daten im aktuellen TCP-Segment werden beginnend mit dem ersten Byte bis zur Stelle des Urgen Pointers SOFORT an höhere Schichten weitergeleitet.
 
@@ -128,17 +129,17 @@ Verwendete Verfahren:
 
     * FIN: 1, falls das Segment zum Verbindungsabbau gehört, inkrementiert Sequence und Acknowledgment Numbers, obwohl keine Nutzdaten transportiert werden. 
 
-14. Window: Grösse des aktuellen empfangsfensters **in Byte**, sodass der Empfänger die Datenrate des Senders drosseln kann.
+14. **Window**: Grösse des aktuellen empfangsfensters **in Byte**, sodass der Empfänger die Datenrate des Senders drosseln kann.
 
-15. Checksum über Header und Daten
+15. **Checksum** über Header und Daten
 
-16. Urgent Pointer (selten verwendet): Angabe des Endes der Urgent-Daten, werden sofort an höhere Schichten weitergereicht, falls `URG = 1`
+16. **Urgent Pointer** (selten verwendet): Angabe des Endes der Urgent-Daten, werden sofort an höhere Schichten weitergereicht, falls `URG = 1`
 
-17. Options: Window-Scaling, Angabe der Maximum Segment Size (MSS) 
+17. **Options**: Window-Scaling, Angabe der Maximum Segment Size (MSS) 
 
-* *MSS* gibt die maximale Größe eines TCP-Segments (Nutzdaten ohne Header) an
+* **MSS** gibt die maximale Größe eines TCP-Segments (Nutzdaten ohne Header) an
 * MSS bei Fast-Ethernet: 1500 Byte = 20 B IP-Header + 20 B TCP-Header --> sinnvolle MSS beträgt 1460 B
-* MTU hingegen gibt die maximale Größe der Nutzdaten aus Sicht von Schicht 2 an (einschließlich des IP-Headers)
+* MTU (Maximum Transmission Unit) hingegen gibt die maximale Größe der Nutzdaten aus Sicht von Schicht 2 an (einschließlich des IP-Headers)
 
 ##### TCP-Flusskontrolle
 * Vermeidung von Überlastsituationen beim Empfänger
@@ -147,7 +148,7 @@ Verwendete Verfahren:
 
 ##### TCP-Staukontrolle
 * Vermeidung von Überlastsituationen im Netz
-* *Congestion Window* W_C (= Staukontrollfenster) mit Grösse w_c
+* **Congestion Window** W_C (= Staukontrollfenster) mit Grösse w_c
     * Solange Daten verlustfrei übertragen werden: w_c >>
     * Wenn Verluste auftreten: w_c <<
     * Grösse des tatsächlichen Sendefensters: `w_s = min{w_c, w_r}`
@@ -161,4 +162,35 @@ Protokollmechanismen zur Fehlerkontrolle wurden im Hinblick auf Überlast im Net
 
 
 
-**Also müssen Layer 1 - 3 (L1: Physikalisch, L2: Sicherung, L3: Vermittlung) für TCP eine ausreichend geringe Paketfehlerrate sicherstellen.**
+**Also müssen Layer 1 - 3 (L1: Physikalisch, L2: Sicherung, L3: Vermittlung) für TCP eine ausreichend geringe Paketfehlerrate gewährleisten.**
+
+## NAT := Network Address Translation
+
+Damit bezeichnet man Techniken, die es ermöglichen, N private (nicht global eindeutige) auf M globale (weltweit eindeutige IP-Adressen abzubilden). 
+
+     Privat                    Global
+        N      --- NAT --->       M
+
+* `N <= M`: statisch / dynamische Übersetzung
+* `N > M`: 1 öffentliche IP-Adresse wird von mehreren Computern gleichzeitig genutzt. Eine eindeutige Unterscheidung geschieht mittels Port-Multiplexing. Häufigster Fall ist `M = 1`, z.B. bei einem privaten DSL-Anschluss. 
+
+Der SrcPort wird vom Absender üblicherweise im Bereich `[1024, 65535]` gewählt (**Ephemeral Ports**, kurzlebige Ports, die wieder freigegeben werden, sobald die Verbindung terminiert). 
+
+Bei der NAT tauscht der NAT-Router die Absenderadresse des Pakets durch seine eigene globale Adresse aus und erzeugt einen neuen Eintrag in seiner NAT-Rabelle, um seine Änderungen an dem Paket zu dokumentieren. 
+
+Der Antwortendende weiss i.d.R. nichts von der NAT und hält den NAT-Router Für den Sender. 
+
+### Private IP-Adressen
+Private Adressbereiche: 
+
+     10.0.0.0/ 8
+     172.16.0.0/18
+     169.254.0.0/16
+     192.168.0.0/16
+
+Automatische Adressvergabe (Autonatic Private IP Addressing)
+
+Router übernehmen die Aufgabe der Netzwerkadressübersetzung. 
+
+Für die Adressauflösung muss eigentlich die Globale IP des Empfängers bekannt sein. Wenn dies aber ein privater Adressbereich ist, muss der jeweilige Router NAT bereitstellen, damit die private IP genatted werden kann.
+
