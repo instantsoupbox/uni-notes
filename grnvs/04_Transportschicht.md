@@ -23,7 +23,7 @@ Die Kommunikation ist
 * nachrichtenorientiert
 
 #### UDP := User Datagram Protocol
-UDP ist eines der beiden am häufigsten verwendeten Transportprotokolle im Internet. Es ist **ungesichert** und **nachrichtenorientiert**.
+UDP ist eines der beiden am häufigsten verwendeten Transportprotokolle im Internet. Es ist **verbindungslos**, **ungesichert** und **nachrichtenorientiert**. Verbindungslos bedeutet, dass kein Verbindungsaufbau und keine Synchronisation stattfinden. Ungesichert heisst, dass die Pakete nicht zwingend in der richtigen Reihenfolge bzw. ohne Verluste am Empfänger ankommen (**Best-Effort-Prinzip**). 
 
 | Vorteile      | Nachteile   |
 | ------------- |---------------|
@@ -125,7 +125,7 @@ Verwendete Verfahren:
 
     * RST: Abbruch einer TCP-Verbindung ohne ordnungsgemässen Verbindungsabbau
 
-    * SYN: 1, falls das Segment zum Verbindungsaufbau gehört, inkrementiert Sequence und Acknowledgement Nummern
+    * SYN: 1, falls **das Segment zum Verbindungsaufbau gehört**, inkrementiert Sequence und Acknowledgement Nummern
 
     * FIN: 1, falls das Segment zum Verbindungsabbau gehört, inkrementiert Sequence und Acknowledgment Numbers, obwohl keine Nutzdaten transportiert werden. 
 
@@ -137,9 +137,9 @@ Verwendete Verfahren:
 
 17. **Options**: Window-Scaling, Angabe der Maximum Segment Size (MSS) 
 
-* **MSS** gibt die maximale Größe eines TCP-Segments (Nutzdaten ohne Header) an
+* **MSS** (Maximum Segment Size) gibt die maximale Größe eines TCP-Segments (Nutzdaten ohne Header) an, sodass die MTU (s. u.) nicht überschritten wird. 
 * MSS bei Fast-Ethernet: 1500 Byte = 20 B IP-Header + 20 B TCP-Header --> sinnvolle MSS beträgt 1460 B
-* MTU (Maximum Transmission Unit) hingegen gibt die maximale Größe der Nutzdaten aus Sicht von Schicht 2 an (einschließlich des IP-Headers)
+* MTU (Maximum Transmission Unit) hingegen gibt die maximale Größe der Nutzdaten aus Sicht von Schicht 2 an (IP-Paket inkl. IP-Header), also der L3-PDU. 
 
 ##### TCP-Flusskontrolle
 * Vermeidung von Überlastsituationen beim Empfänger
@@ -179,6 +179,8 @@ Der SrcPort wird vom Absender üblicherweise im Bereich `[1024, 65535]` gewählt
 Bei der NAT tauscht der NAT-Router die Absenderadresse des Pakets durch seine eigene globale Adresse aus und erzeugt einen neuen Eintrag in seiner NAT-Rabelle, um seine Änderungen an dem Paket zu dokumentieren. 
 
 Der Antwortendende weiss i.d.R. nichts von der NAT und hält den NAT-Router Für den Sender. 
+
+Falls ein anderer Sender S2 zufällig einen existierenden Quellport wählt, also den gleichen wie der des Senders S1, der vorher schon einmal gesendet hat, so wird für den globalen Port von S2 ein zufälliger Wert gewählt, wie beispielsweise `S1_Port + 1`. 
 
 ### Private IP-Adressen
 Private Adressbereiche: 

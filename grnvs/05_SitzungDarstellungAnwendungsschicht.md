@@ -24,8 +24,7 @@ Angebotene Dienste im *verbindungsorientierten Modus*:
 6. Erhalt u. Wiederaufnahme von Sessions nach Verbindungsabbrüchen
 
 #### HTTP Hyper Text Transfer Protocol
-Ein Protokoll zum Transfer von Website und Dateien
-**Cookies** sind kleine Datenfragmente, welche von einem Webserver (bzw. einem damit verbundenen Anwendungsprozess)an einen Webclient übertragen und dort gespeichert werden können. Dadurch kann eine Sitzung über mehrere Anfragen und Antworten, Interaktionen und TCP-Verbindungen hinweg bestehen bleibt. 
+Ein Protokoll zum Transfer von Website und Dateien. **Cookies** sind kleine Datenfragmente, welche von einem Webserver (bzw. einem damit verbundenen Anwendungsprozess)an einen Webclient übertragen und dort gespeichert werden können. Dadurch kann eine Sitzung über mehrere Anfragen und Antworten, Interaktionen und TCP-Verbindungen hinweg bestehen bleibt. 
 
 #### TLS Transport Layer Security
 TLS ist ein Protokoll zur Authentifizierung und verschlüsselten Übertragung von Daten über einen verbindungsorientierten Transportdienst und ist die Grundlage für beispielsweise HTTPS. 
@@ -141,7 +140,7 @@ Mittels Fully Qualified Domain Name FQDN können wir mithilfe von DNS das Ziel e
 
 <<<<<<<<<>>>>>>>>>
 
-### HTTP HyperTestTransfer Protocol
+### HTTP HyperTextTransfer Protocol
 Protokoll, das im Internet am häufigsten zur Datenübertragung zwischen Client und Server genutzt wird. 
 Es definiert, welche Anfragen ein Client stellen darf und wie Server darauf zu antworten haben. Mit einem HTTP-Kommando wird höchstens ein Objekt übertragen. Dieses wird als ASCII-kodierter Text interpretiert. 
 

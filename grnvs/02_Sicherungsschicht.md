@@ -1,19 +1,22 @@
 KAP 2 - Sicherungsschicht
 =====
 <details>
-    <summary>Modell des Direktverbindungsnetzes</summary>
-    Alle angeschlossenen Knoten sind direkt erreichbar, Identifizierung mit einfachen Adressen der Schicht 2, keine Vermittlung, aber einfache Weiterleitung in Form von Bridging oder Switching
+    <summary>Welche Eigenschaften hat ein Direktverbindungsnetz?</summary>
+    <ul>
+        <li> Alle angeschlossenen Knoten sind direkt erreichbar </li>
+        <li> Identifizierung mit einfachen Adressen der Schicht 2 </li>
+        <li> keine Vermittlung, aber einfache Weiterleitung in Form von Bridging oder Switching </li>
+    <ul/>
 </details>
 
 <details>
-    <summary>Aufgaben der Sicherungsschicht</summary>
-    Steuerung des Medienzugriffs, Prüfung übertragener Nachrichten auf Fehler und die Adressierung innerhalb von Direktverbindungsnetzen</br>
+    <summary>Welche Aufgaben besitzt die Sicherungsschicht?</summary>
+    <ul>
+    <li> Steuerung des Medienzugriffs </li>
+    <li> Prüfung übertragener Nachrichten auf Fehler </li>
+    <li> Adressierung innerhalb von Direktverbindungsnetzen </li>
+    </ul>
 </details>
-
-#### Steuerung des Medienzugriffs
-Hubs, alle angeschlossenen Conputer werden zu einem Bus verbunden, gleichzeitiges Senden führt zu Kollisionen (Nachrichtenverlust)
-
-#### 
 
 ### Darstellung von Netzwerken als Graphen
 
@@ -41,11 +44,11 @@ Verbindungscharakterisierung anhand:
 * Übertragungsrichtung
 * Mehrfachzugriff (Multiplexing) 
 
-Die **Übertragungsrate** bestimmt die Serialisierungszeit/Übertragungsverzögerung (Serialization/Transmission Delay)
+Die **Übertragungsrate** bestimmt die **Serialisierungszeit** /Übertragungsverzögerung (Serialization/Transmission Delay), also die notwendige Zeit, eine bestimmte Anzahl an Datenbits auf ein Übertragungsmedoim zu legen.
 
 Die **Ausbreitungssverzögerung** (Propagation Delay) wird bestimmt von der endlichen Ausbreitungsgeschwindigkeit von Signalen, welche relativ zur Lichtgeschwindigkeit im Vakuum angegeben wird. 
 
-**Bandbreitenverzögerungsprodukt**: Speicherkapazität durch die endliche Ausbreitungsverzögerung, Anzahl an Bits (Kapazität), die sich gleichzeitig auf der Leitung befinden können. 
+Das **Bandbreitenverzögerungsprodukt** bezeichnet die Speicherkapazität bedingt durch die endliche Ausbreitungsverzögerung, sprich die Anzahl an Bits (Kapazität), die sich gleichzeitig auf der Leitung befinden können. 
 
 Charakterisierung der **Übertragungsrichtung**
 * Simplex
@@ -118,20 +121,20 @@ Collision avoidance: basiert auf p-persistentem CSMA
 
 Prinzip **"Hidden Station"**
 
-### Rahmenbildung, Adressierung und Fehlererkennung
-***
+### Rahmen und Rahmengrenzen
 <details>
     <summary>Welche Methoden zur Rahmenbegrenzung gibt es?</summary>
-    Längenangaben d. Nutzerdaten, Steuerzeichen (Start, Ende), Begrenzungsfelder und Bit-Stopfen, Coderegelverletzung
+    <ul>
+        <li> Längenangaben d. Nutzerdaten </li>
+        <li> Steuerzeichen (Start, Ende) </li> 
+        <li> Begrenzungsfelder und Bit-Stopfen </li> 
+        <li> Coderegelverletzung </li>
+    </ul>
 </details>
 
-In Schicht 1: Nachricht ist lediglich Abfolge von Bits. 
+Auf L1 ist eine Nachricht lediglich eine Abfolge von Bits. Da wir uns nun auf L2 - der Sicherungsschicht befinden, sprechen wir nun von einer Nachricht, bzw. einem Frame oder zu deutsch - einem Rahmen. 
 
-Jetzt: Betrachtung auf der Sicherungsschicht.
-
-Nachricht = Frame / Rahmen
-
-Methoden zur **Rahmenbegrenzung** 
+Methoden zur **Rahmenbegrenzung**:
 * **Längenangaben d. Nutzdaten**
    * Länge der nachfolgenden Nutzdaten am Anfang des rahmens
    * Längenfeld muss eindeutig erkennbar sein!
@@ -139,45 +142,54 @@ Methoden zur **Rahmenbegrenzung**
 * **Begrenzungsfelder und "Bit-Stopfen"** (dadurch wird sichergestellt, dass die Markierung nicht zufällig in den Nutzdaten vorkommt)
 * **Coderegelverletzung** (Auslassung bestimmter Signalwechsel, um ein ungültiges Symbol zu erzeugen, sodass den Start und das Ende eines Rahmens markiert wird)
 
-Ziel: Erhaltung der **Codetransparenz** - Ermöglichung der Übertragung beliebiger Zeichenfolgen
+Das Ziel ist die Erhaltung der **Codetransparenz**. Das heisst, es sollen beliebige Möglichkeiten an Zeichenfolgen übertragen und gleichzeitig unterschiedliche Rahmen voneinander abgegrenzt werden können. 
 
-### Adressierung und Fehlererkennung
-Wir halten uns an IEEE 802-Standards
+### Adressierung und Fehlererkennung auf L2
 
-#### ADRESSIERUNG
+#### ADRESSIERUNG MIT MAC-ADRESSEN
 
-Zunächst: Adressierung in **Direktverbindungsnetzen** (keine Vermittlung zwischen Knoten (Routing))
+In **Direktverbindungsnetzen** sind alle angeschlossene Knoten direkt erreichbar. Es findet keine Vermittlung (**Routing**) zwischen Knoten statt. 
 
-**MAC-Adressen** (Media Access Control): Adressen auf Schicht 2, sie sind 6 Bytes lang (für Ethernet und 802.11 WLAN)
+Die Adressierung auf L2 geschieht über **MAC-Adressen** (Media Access Control). Diese sind **6 Bytes** lang und werden durch `:` getrennt in 6 Blöcken angegeben, der Aufbau lautet wie folgt: 
+
+     [B]    0     1     2     3     4     5
+         |       OUI       |    Device ID    |
+
+Die ersten drei Byte sind die OUI, welches für **Organizationally Unique Identifier** steht. Darüber kann der Hersteller der Netzwerkkarte identifiziert werden. Die Device ID ist der gerätespezifische Teil der MAC-Adresse. 
 
 Anforderungen:
 * Eindeutige Identifizierung der Knoten innerhalb des Direktverbindungsnetzes
-* **Broadcast-Adresse**, welche alle Knoten im Direktverbindungsnetz anspricht
+* **Broadcast-Adresse** `ff:ff:ff:ff::ff:ff`, welche alle Knoten im Direktverbindungsnetz anspricht
 * **Multicast-Adresse**, welche einebestimmte Gruppe von Knoten anspricht
 
 #### FEHLERERKENNUNG
-I. d. R. dient die Prüfsumme eines Schicht-2-Protokolls nicht der Fehlerkorrektur, sondern der **Fehlererkennung**. Dabei soll die **Weiterleitung eines fehlerhaften Payloads** an höhere Schichten verhindert werden. 
+I. d. R. dient die Prüfsumme eines L2-Protokolls nicht der Fehlerkorrektur, sondern der **Fehlererkennung**. Dabei soll die **Weiterleitung eines fehlerhaften Payloads** an höhere Schichten verhindert werden. 
 
 **Fehlererkennende Codes / Prüfsummen / Checksum** 
 
 ##### Cyclic Redundancy Check CRC
+CRC ist nur ein fehlererkennender Code. Es soll eine grosse Anzahl von Fehlern erkannt werden. Die zugefügte Redundanz soll gering sein. Fehler sollen lediglich erkannt, aber nicht korrigiert werden. 
 
-Folgende Fehler werden erkannt:
+Die Summe zweier Datenwörter entspricht einer bitweisen `XOR`-Verknüpfung. 
+
+Wenn der Divisionsrest zwischen der eingehenden Nachricht und dem Reduktionspolynom gleich null ist, so ist mit hoher Wahrscheinlichkeit kein Übertragungsfehler aufgetreten. Wenn dieser ungleich 0 ist, so ist mit Sicherheit ein Fehler aufgetreten. 
+
+Folgende Fehler werden erkannt (mit N = `grad(r(x))`):
 * 1-bit Fehler
 * isolierte 2-bit Fehler
-* Burst-Fehler, die länger als N sind
-* alle Burst-Fehler, deren Länge kleiner ist als N
+* Burst-Fehler, die länger als `N` sind
+* alle Burst-Fehler, deren Länge kleiner ist als `N`
 * Fehlermuster mit ungerader Anzahl an Fehlerbits
 
 Folgende Fehler werden nicht erkannt:
-* Fehler, die länger als N sind
+* Fehler, die länger als `N` sind
 * Fehler bestehend aus mehreren Bursts
 * Fehler, die ein Vielfaches des Reduktionspolynoms sind
 
 
-### Verbindung auf Schicht 1 und 2
+### Verbindung auf L1 und L2
 
-#### HUBS (Physikalische Schicht)
+#### Hubs (Physikalische Schicht)
 * **Aktive Hubs (Repeater):** Signalverstärker auf der physikalischen Schicht, ohne Fehler-/Adressprüfung
 * **Passive Hubs:** Sternverteiler
 
@@ -192,6 +204,6 @@ Switches mit zwei Ports nennt man auch **Bridge**
 Eine **Kollisionsdomäne** umfasst alle Netzwerkgeräte, die um den Zugriff auf ein gemeinsames Übertragungsmedium konkurrieren.
 Dies ist ein Teil eines Direktverbindungsnetzes, innerhalb dessen eine Kollision bei gleichzeitiger Übertragung mehrerer Knoten auftreten kann. Dieser wird häufig auch als **Segment** bezeichnet.
 
-Kollisionsdomänen werden durch Switches bzw. Bridges unterbrochen (**Segmentierung**). 
+Kollisionsdomänen werden durch Switches bzw. Bridges unterbrochen, man spricht dabei von einer **Segmentierung**. 
 
-**Microsegmentation**: Vollständig geswitchtes Netz (Pro Switchport ist genau ein Host angeschlossen).
+Unter **Microsegmentation** versteht man ein vollständig geswitchtes Netz. Das heisst pro Switchport ist genau ein Host angeschlossen.

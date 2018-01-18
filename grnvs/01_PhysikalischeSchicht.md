@@ -170,8 +170,10 @@ Rauschen erschwert die Unterscheidung von Signalstufen mit steigender Feinheit d
 
 <details>
     <summary>Überprüfung von Datensendung oder Beginn / Ende der Nachricht? </summary>
-    Coderegelverletzung: Präambel vor Beginn einer Nachricht (fest definierte Anzahl alternierender Bits) / Start Frame Delimiter zeigt Beginn einer Nachricht an (SFD)
-    Steuerzeichen: Blockcode, der Steuerzeichen bereit stellt, Kanalwörter werden in Gruppen von k-Bits unterteilt und auf n>k Bits abgebildet.
+    <ul>
+    <li> Coderegelverletzung: Präambel vor Beginn einer Nachricht (fest definierte Anzahl alternierender Bits) / Start Frame Delimiter zeigt Beginn einer Nachricht an (SFD) </li>
+    <li> Steuerzeichen: Blockcode, der Steuerzeichen bereit stellt, Kanalwörter werden in Gruppen von k-Bits unterteilt und auf n>k Bits abgebildet </li>
+    </ul>
 </details>
 
 **Basisbandsignale**, für das der Übertragungskanal exklusiv zur Verfügung steht. Zeitlich begrenzte Sendeimpulse besitzen ein unendlich ausgedehntes Spektrum. 
@@ -186,7 +188,7 @@ Rauschen erschwert die Unterscheidung von Signalstufen mit steigender Feinheit d
 
 2. Kanalkodierung (Channel Coding)
 
-    * Gezieltes Hinzufügen von Redundanz
+    * Gezieltes / strukturierte Hinzufügen von Redundanz
 
     * Ziel: Erkennen / Korrektur von Bitfehlern 
 

@@ -47,7 +47,7 @@ Phasen während einer verbindungsorientierten Übertragung:
       
       Austausch von **Signalisierungsnachrichten** zum Abbau der Verbindung, Freigabe der Ressourcen für nachfolgende Verbindungen
 
-| Vorteile      | Nachteile   |
+| Vorteile      | Nachteile     |
 | ------------- |---------------|
 | Gleichbleibende Güte der dedizierten Verbindung nach dem Verbindungsaufbau     | Ressourcenverschwendung durch exklusive Nutzung |
 | Schnelle Datenübertragung      | Komplexer Verbindungsaufbau      |
@@ -111,7 +111,7 @@ Vor dem Versenden von Daten müssen Daten aus dem Host-Byte Order in Network Byt
 
 2. IHL := IP-Header Length
 
-    Länge des IP-Headers **in Vielfachen von 32 bit**. Dies ist wichtig, da der IPv4-Header durchOptionsfelder eine variable Länge hat.
+    Länge des IP-Headers **in Vielfachen von 32 bit**. Dies ist wichtig, da der IPv4-Header durch Optionsfelder eine variable Länge hat.
 
 3. TOS := Type of Service
 
@@ -119,7 +119,7 @@ Vor dem Versenden von Daten müssen Daten aus dem Host-Byte Order in Network Byt
 
 4. Total Length 
 
-    Gesamtlänge des IP-Pakets (Header + Daten) **in Bytes**. Es gibt eine maximale Paketlänge, sodass keine Fragmentierung notwendig ist. Diese bezeichnet man als MTU (Maximum-Transmission Unit). Diese hängt von Schicht 2/1 ab und beträgt 1500 B für FastEthernet.
+    Gesamtlänge des IP-Paketsm also `Header + Daten` **in Bytes**. Es gibt eine maximale Paketlänge, sodass keine Fragmentierung notwendig ist. Diese bezeichnet man als MTU (Maximum-Transmission Unit). Diese hängt von Schicht 2/1 ab und beträgt 1500 B für FastEthernet.
 
 5. Identification
 
@@ -158,7 +158,7 @@ Vor dem Versenden von Daten müssen Daten aus dem Host-Byte Order in Network Byt
 
 #### ADRESSAUFLÖSUNG (Bestimmung der MAC-Adresse des Next-Hops)
 **ARP (Address Resolution Protocol)** 
-1. **ARP-Request** - (Who hast `dest-ip`? Tell `source-ip` at `source-mac`.) gesendet an MAC-Broadcast-Adresse `ff:ff:ff:ff:ff:ff`
+1. **ARP-Request** - (Who has `dest-ip`? Tell `source-ip` at `source-mac`.) gesendet an MAC-Broadcast-Adresse `ff:ff:ff:ff:ff:ff`
 2. **ARP-Reply** - (`Dest-ip` is at `dest-mac`.) an MAC-Unicast-Adresse
 
 Das Ergebnis einer Adressauflösung wird i.d.R. im **ARP-Cache** eines Hosts zwischengespeichert, um nicht bei jedem zu versendenen Paket erneut eine Adressauflösung durchführen zu müssen. 
@@ -325,6 +325,46 @@ Diese erlauben es, zusätzliche Layer 3 Informationen in einem extra IPv6 Paket 
 4. **Anycast** 
     * Adressierung an eine beliebige Station einer bestimmten Gruppe
 
+#### Multicast
+
+     ff02::1
+All Nodes - adressiert werden alle Knoten auf dem lokalen Link
+
+     ff02::2
+All Routers - adressiert werden alle Router auf dem lokalen Link
+
+     ff02::1:2
+All **DHPC-Agents** - adressiert werden alle Router auf dem lokalen Link.
+
+     ff02::1:ff00:0/104
+**Solicited-Node Address** - diese wird im **Neighbor Discovery Protocol** bei der Adressauflösung generiert.
+
+    // Beispiel zur Generierung der Solicited-Node Adresse
+    // Praefix
+    ff02::1:ff00:0/104
+
+    // Global Unique
+    2001:0db8:1ee7:2ea2:0921:2e11:d2c6:938b
+                                    ^^ ^^^^
+    // Solicited-Node Adresse
+    ff02::1:ffc6:938b
+              ^^ ^^^^
+
+    // Beispiel zum Mapping von Multicast iPv6 auf MAC-Adressen
+    ff02::1:ffc6:938b ---> 33:33:ff:c6:93:8b
+            ^^^^ ^^^^            ^^ ^^ ^^ ^^
+
+Die letzten 4 Oktette der Ethnernetadresse werden die letzten 4 Oktette der IPv6 Multicastadresse. 
+
+#### SLAAC Stateless Address Autoconfiguration
+
+Ein Host generiert sich die für ein Interface benötigte link-local IPv6-Adresse wie folgt:
+    
+     | Prefix     | Subnett Identifier    | Interface Identifier                  |
+     | fe80:10    | ::/54                 | OUI      ff:fe      Device Identifier |
+                    ^ auf 0 gesetzt!!!      ^ 
+                                         !!!Invertiere das 2. Bit des 1. Oktett des OUI!!!!
+
 #### ICMPv6 HEADERFORMAT
 1. Type:
       
@@ -342,21 +382,30 @@ Diese erlauben es, zusätzliche Layer 3 Informationen in einem extra IPv6 Paket 
 
 #### Neighbor Discovery Procotocol (NDP)
 NDP ist ein Bestandteil von ICMPv6. Dessen Funktionen sind beispielsweise:
-* **Neighbor Solicitations**, **Advertisements**
+* **Neighbor Solicitations / Advertisements**
     * Adressauflösung
     * Duplicate Address Detection
     * Neighbor Unreachability Detection
-* **Router Discovery**, **Router Advertisements**
+* **Router Discovery / Advertisements**
     * Automatisches Auffinden von Routern innerhalb des lokalen Netzsegments
     * Adress-Präfix 
     * Parameter-Konfiguration
 * **Redirects**: Umleitung zu anderen Gateways
 
-* Neighbor Solicitation (Request)
-    * ICMPv6 Header: ICMPv6 Type und Code
-    * Neighbor Discovery Body
-    * Neighbor Discovery Options
-* Neighbor Advertisement (Reply)
+#### NDP-HEADERFORMATE
+
+**Neighbor Solicitation (Request)**
+1. ICMPv6 Header: Type und Code
+2. Neighbor Discovery Body: Die Target Address ist die Ziel-IPv6-Adresse, zu der die entsprechende MAC-Adresse gesucht wird.
+3. Neighbor Discovery Options: Die Source Link Address ist die L2-Adresse des anfragenden Knotens.
+
+**Neighbor Advertisement (Reply)**
+1. ICMPv6 Header: Type und Code
+2. Neighbor Discovery Body:
+    * R := Router-Flag: 1, wenn der antwortende Knoten ein Router ist. 
+    * S := Solicited-Flag: 1, wenn das Advertisement infolge einer Solicitation geschickt wird.
+    * O := Override Flag: 1, falls das Advertisement eine möglicherweise gecached LL-Adresse beim Empfänger aktualisieren soll
+3. Neighbor Discovery Options: Die Target Link Address ist die L2-Adresse, die der anfragende Knoten erfahren wollte.
 
 ## Wegwahl (Routing)
 
