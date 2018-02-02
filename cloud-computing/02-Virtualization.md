@@ -1,9 +1,9 @@
-# 02 VIRTUALIZATION
+# 02 VIRTUALIZATION I
 
 ## Virtualization
 * Computer architecture technology
 * Multiple VMs are multiplexed within the same hardware
-* VMM: Virtual machine monitor
+* VMM: Virtual machine monitor (also: hypervisor)
 * Objectives:
     * Enhance resource sharing
     * On-the-fly replacement and upgrading of hardware (quick provision)
@@ -30,8 +30,8 @@ Applications                Guest
 
 ## Virtualization can be regarded from a software and a hardware perspective
 ## Levels of Virtualization
-
-```                                     Interfaces for users:
+```
+                                         Interfaces for users:
 =====================================
  Application level virtualization        API
 -------------------------------------
@@ -41,19 +41,19 @@ Applications                Guest
 -------------------------------------
  Hardware abstraction level virtual.
 -------------------------------------
- Instruction set architecture level
+ ISA level virtual.
 =====================================
 ```
-1. Instruction set level virtualization
+1. **Instruction set architecture level** virtualization
     * Emulation of one ISA into another ISA
     * Mapping of opcodes of one machine onto the ones of another machine
 
-2. Hardware abstraction level
+2. **Hardware abstraction level** virtualization
     * VMM / hypervisor is placed between the hardware and the host OS
     * Virtualization of a computer's resources (CPUs, memory, I/O devices)
     * Multiple users sharing the hardware concurrently at a time
 
-3. OS level virtualization
+3. **OS level** virtualization
     * Create isolated containers on a single physical server
     * Multiple isolated VMs within a single OS kernel
     * Examples:
@@ -62,22 +62,20 @@ Applications                Guest
         * Containers
         * Single OS Image Virtualizations
 
-4. Library level virtualization
+4. **Library level** virtualization
     * Virtualization with library interfaces, i.e. APIs to call interception and remapping
     * Examples: WINE, vCUDA
     * **vCUDA**:
         * CUDA: Programming model and library for GPGPUs
         * vCUDA virtualizes CUDA library and can be invoked from a guest OS
 
-5. Application level virtualization
+5. **Application level** virtualization
     * Also called: Process level virtualization
     * Application is virtualized as a VM
     * It acts as a HLL program (high level language) that can be executed on machines of different architectures
     * Example: JVM
 
-## Hardware and OS Level Virtualizations
-* Type 2: OS level - e.g. VirtualBox
-
+## Hardware and OS Level Virtualizations    
 ```
 Type 1              Type 2
 HW level            OS level
@@ -94,10 +92,15 @@ HW level            OS level
 ---------------     ---------------
 | Hardware     |    | Hardware     |
 ---------------     ---------------
-
 ```
+* Both types must execute the machine's instructions in a safe manner.
+* **Guest OS**: OS running on top of the hypervisor
+* For type 2, **Host OS** is the operating system running on top of the hardware.
 
 ### Type 1: HW level (Baremetal virtualization) - e.g. VMWare ESXi
+* According to [Tanenbaum](https://en.wikipedia.org/wiki/Modern_Operating_Systems):
+    * A **Type 1 hypervisor** is like an operating system, it's the only program running in the most priviledged mode
+    * Its job is to support possibly multiple copies of the actual hardware ( - virtual machines), similar to a process a normal operating system runs.
 * HW abstraction level virtualization
 * HV has direct access to HW resources 
 * OSs / Guests are installed on top of the HV
@@ -131,17 +134,25 @@ HW level            OS level
     * with binary translation
         * binary translation is applied on trapped critical instruction
         * those instruction are then executed by the VMM
-* Para-virtualization
+* **Para-virtualization**
     * [Wikipedia](https://en.wikipedia.org/wiki/Paravirtualization)
-    * Provide a software interface to the VMM (not the underlying hardware-software interface!)
-    * **Hypercall**: System call to the HV below.
-    * HV provides hypercall interface to accomodate critical kernel operations
-    * Objective: Improvement of performance by avoiding unnecessary trapping of critical instructions, i.e. to decrease virtualization overhead.
+    * A software interface to the underlying hardware is provided to the VMM. (not the underlying hardware-software interface!)
+    * **Hypercall**: System call to the HV below. Equal what a syscall is to a kernel.
+    * HV provides hypercall interface to accomodate critical kernel operations.
+    * Objective: Improvement of performance by avoiding unnecessary trapping of critical instructions (those are handled now by the HV), i.e. to decrease **virtualization overhead**.
 
 ### Type 2: OS level
-* Multiple VMs can share a single machine / cluster
-* Advantages: Low resource requirements, high scalability --> better speed and performace
+* According to [Tanenbaum](https://en.wikipedia.org/wiki/Modern_Operating_Systems):
+    * **Type 2 hypervisor** is a program that relies on e.g. Windows / Linux to allocate and schedule ressources.
+    * It pretends to be a full computer with a CPU and various devices.
+* Type 2: OS level - e.g. VirtualBox
+* Advantages:
+    * Low resource requirements
+    * High scalability 
+    * Multiple VMs can share a single machine / cluster
+    * Better speed and performace
 * Challenges: 
+    * All OSs in a container must have one type of OS.
 
 ## Virtualization from HW Perspective
 
@@ -152,17 +163,20 @@ HW level            OS level
 * Mapping done by VMMs - Two-Stage mapping process
     * `Memory addresses (virtual addresses of VMs) --> RAM (Physical memory) --> Machine memory`
     * Guest OSs can not directly access machine memory
-    * **Shadow table**: Page table in VMM
+    * **Shadow page table**: Maps virtual pages used by VM onto the actual pages given by the hypervisor.
+
+# 02 - VIRTUALIZATION II
 
 ## Virtual Clusters
 * Comprised of multiple VMs - Connections of VMs, virtual switches / networks
 * VMs are logically connected to distributed servers via a virtual network.
-* 1 Virtual Cluster possibly spans across several clusters
+* 1 Virtual Cluster possibly spans across several clusters.
+* VSs are supposed to solve the **hardware cost problem**.
 * High availability, scalability and performance improvements to an application (real cluster is more expensive)
 
 ### Design Aspects
 1. Live migration of VMs
-2. Live migratino of memory and file systems
+2. Live migration of memory and file systems
 3. Dynamic deployment at runtime of VCs
 
 ### Dynamic Provisioning
@@ -182,19 +196,26 @@ VC Dynamic Provisioning Strategies
 |--- Server Consolidation
 ```
 
-* **VC Deployment**:
+#### VC Deployment
+* Dynamic provisioning - deployment considerations: **VC Deployment**:
+* Steps of Virtual Cluster Deployment:
     1. Construct, distribute the whole system of software stack to a physical node
     2. Identify destination node
     3. Switch run time environments from one user's cluster to the other user's cluster
     4. Shutdown / suspension of the cluster upon migration
-    * Dealing with large deployment overheads:
-        1. Design new migration strategies
-        2. Frame an effective load balancer
-        3. Increase resource uilization to shorten execution of workloads
+    * We can see that the deployment procedure can incur hefty overheads.
+* How can we deal with large deployment overheads?
+    1. Design new migration strategies
+    2. Frame an effective load balancer (autoscaling)
+    3. Increase resource uilization to shorten execution of workloads
 
+### VM Migration 
 * **VM Migration**: Task of moving a VM from one physical hardware environment (host) to another
     * Resource management technique
-    * Objective: Load balancing between hosts, green computing (i.e. switching off underutilized hosts), enabling maintenance
+    * Objectives: 
+        1. Load balancing between hosts
+        2. Green computing (i.e. switching off underutilized hosts)
+        3. Enabling maintenance
     * Stages:
         ```
         0. Pre-migration             > VM running 
@@ -204,3 +225,5 @@ VC Dynamic Provisioning Strategies
         4. Commitent                     > (VM out of service)
         5. Activation                      > VM running normally on Host B
         ```
+* Cold migration: Suspending the OS before transferring it. The VM that is to be migrated has to be shut down. 
+* Hot migration: Transferring the OS without stopping the OS operations or applications.
