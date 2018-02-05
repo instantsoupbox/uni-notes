@@ -136,8 +136,7 @@ HW level            OS level
         * those instruction are then executed by the VMM
 * **Para-virtualization**
     * [Wikipedia](https://en.wikipedia.org/wiki/Paravirtualization)
-    * A software interface to the underlying hardware is provided to the VMM. (not the underlying hardware-software interface!)
-    * **Hypercall**: System call to the HV below. Equal what a syscall is to a kernel.
+    * **Hypercall**: System call to the VMM below. Equal what a syscall is to a kernel.
     * HV provides hypercall interface to accomodate critical kernel operations.
     * Objective: Improvement of performance by avoiding unnecessary trapping of critical instructions (those are handled now by the HV), i.e. to decrease **virtualization overhead**.
 
@@ -168,38 +167,41 @@ HW level            OS level
 # 02 - VIRTUALIZATION II
 
 ## Virtual Clusters
-* Comprised of multiple VMs - Connections of VMs, virtual switches / networks
+* Comprised of multiple connected VMs, virtual switches / networks
 * VMs are logically connected to distributed servers via a virtual network.
 * 1 Virtual Cluster possibly spans across several clusters.
+* Typical practice: Dynamic provisioning of VMs.
 * VSs are supposed to solve the **hardware cost problem**.
-* High availability, scalability and performance improvements to an application (real cluster is more expensive)
+* Achievements:
+    * High availability
+    * Scalability and performance improvements to an application (real cluster is more expensive)
 
 ### Design Aspects
 1. Live migration of VMs
 2. Live migration of memory and file systems
 3. Dynamic deployment at runtime of VCs
 
-### Dynamic Provisioning
+### Dynamic Provisioning (Bereitstellung)
 Characteristics:
 * A VM runs with a guest OS
 * VMs are replicated across multiple servers (for reliability, fault tolerance, disaster recovery)
 * Dynamic in/decrease of number of machines
-* System continues in case of failure in any physical server which would pull dosn the running VMs
+* System continues in case of failure in any physical server which would pull down the running VMs.
 
-Necessity of effective implementation strategies for a VC, i.e. manual provisioning is not suitable.
-```
+Necessity of effective implementation strategies for a VC. Manual provisioning is not suitable.
+
 VC Dynamic Provisioning Strategies
-|--- Storage Mechanisms of VM images
-|--- VC Deployment
-|--- VC Schedulung
-|--- Load Balancing
-|--- Server Consolidation
-```
+1. Storage Mechanisms of VM images
+2. VC Deployment
+3. VC Schedulung
+4. Load Balancing
+5. Server Consolidation
+
 
 #### VC Deployment
-* Dynamic provisioning - deployment considerations: **VC Deployment**:
+* Deployment considerations to achieve dynamic provisioning: **VC Deployment**
 * Steps of Virtual Cluster Deployment:
-    1. Construct, distribute the whole system of software stack to a physical node
+    1. Construct, distribute the whole system of software stacks to a physical node (usually via templates). 
     2. Identify destination node
     3. Switch run time environments from one user's cluster to the other user's cluster
     4. Shutdown / suspension of the cluster upon migration
@@ -225,5 +227,10 @@ VC Dynamic Provisioning Strategies
         4. Commitent                     > (VM out of service)
         5. Activation                      > VM running normally on Host B
         ```
-* Cold migration: Suspending the OS before transferring it. The VM that is to be migrated has to be shut down. 
-* Hot migration: Transferring the OS without stopping the OS operations or applications.
+* **Cold migration**: Suspending the OS before transferring it. The VM that is to be migrated has to be shut down. 
+* **Hot migration**: Transferring the OS without stopping the OS operations or applications.
+* **Copy-on-write (COW) strategy**: 
+    * Optimization strategy in accessing data
+    * Avoidance of unnecessary copy and writing operations
+    * Give pointers (only a reference) to callers of a resource
+    * Upon modification, a true copy is created to prevent changes of caller to becoming visible to the others.
