@@ -27,12 +27,12 @@
 
 ### Memory Hierarchy
 ```
-Processor Registers
-Processor Cache
-RAM
-Flash Memory
-Harddrives (Disk)
-Tape Backup
+Processor Registers      | Size/Capacity
+Processor Cache          |
+RAM                      |   ^ 
+Flash Memory             V   | Access speed
+Harddrives (Disk)            | Cost
+Tape Backup                  |
 ```
 
 ## Storage
