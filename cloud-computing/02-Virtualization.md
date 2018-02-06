@@ -45,13 +45,15 @@ Applications                Guest
 =====================================
 ```
 1. **Instruction set architecture level** virtualization
-    * Emulation of one ISA into another ISA
-    * Mapping of opcodes of one machine onto the ones of another machine
+    * Emulation of one ISA into another ISA.
+    * Mapping of opcodes of one machine onto the ones of another machine.
 
 2. **Hardware abstraction level** virtualization
     * VMM / hypervisor is placed between the hardware and the host OS
+    * VMM has direct access to h/w resources
     * Virtualization of a computer's resources (CPUs, memory, I/O devices)
     * Multiple users sharing the hardware concurrently at a time
+    * Examples: VMWare ESXi, XEN
 
 3. **OS level** virtualization
     * Create isolated containers on a single physical server
@@ -60,10 +62,11 @@ Applications                Guest
         * Virtual Execution Environments
         * Virtual Private Systems
         * Containers
+        * VirtualBox
         * Single OS Image Virtualizations
 
 4. **Library level** virtualization
-    * Virtualization with library interfaces, i.e. APIs to call interception and remapping
+    * Virtualization with library interfaces: API calls are intercepted and redirected to different implementations
     * Examples: WINE, vCUDA
     * **vCUDA**:
         * CUDA: Programming model and library for GPGPUs
@@ -71,27 +74,27 @@ Applications                Guest
 
 5. **Application level** virtualization
     * Also called: Process level virtualization
-    * Application is virtualized as a VM
-    * It acts as a HLL program (high level language) that can be executed on machines of different architectures
+    * Application is virtualized as a VM.
+    * It acts as a HLL program (high level language) that can be executed on machines of different architectures.
     * Example: JVM
 
 ## Hardware and OS Level Virtualizations    
 ```
-Type 1              Type 2
-HW level            OS level
+Type 1                  Type 2
+HW level                OS level
 
----------------     ---------------
-| Guest        |    | Guest        |
-| Applications |    | Applications |
----------------     --------------- 
-| Guest OSs    |    |**** VMM **** |
----------------     ---------------
-=======================================
----------------     ---------------
-|**** VMM *****|    | Host OS      |
----------------     ---------------
-| Hardware     |    | Hardware     |
----------------     ---------------
+-----------------      -----------------
+| Guest         |      | Guest         |
+| Applications  |      | Applications  |
+-----------------      -----------------
+| Guest OSs     |      |***** VMM *****|
+-----------------      -----------------
+========================================
+-----------------      -----------------
+|***** VMM *****|      | Host OS       |
+-----------------      -----------------
+| Hardware      |      | Hardware      |
+-----------------      -----------------
 ```
 * Both types must execute the machine's instructions in a safe manner.
 * **Guest OS**: OS running on top of the hypervisor
