@@ -9,3 +9,7 @@
         * Node controller
         * Replication controller
         * Endpoints controller
+* Node / Minion
+    * Pod: atomic unit on k8s platform, collection of containers deployed on the same minion.
+    * kube-proxy: maintains network rules on the host, performs connection forwarding
+    * kubelet: node-level manager running on a minion
