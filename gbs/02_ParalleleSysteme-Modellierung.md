@@ -1,9 +1,17 @@
 # 02 Parallele Systeme - Modellierung
+* Sequentielle / Parallele Programmausführung
+* Nebenläufige / Echt-parallele Programmausführung
 
 ## 2.1 Einführung
-* Deterministisches Programmverhalten bei sequentieller Programmausführung, i.e. 
-* Nichtdeterminismus: Unterschiedliches Systemverhalten bei gleichen Ausgangsbedingungen und gleichen Eingaben.
-* Interaktionen zwischen parallelen Programmen (i.e. Prozessen) können zu nicht-deterministischem Verhalten führen:
+* Deterministisches Programmverhalten bei sequentieller Programmausführung
+* Nichtdeterminismus: Unterschiedliches Systemverhalten bei gleichen Ausgangsbedingungen und gleichen Eingaben, i.e. parallelen Programmausführung.
+
+
+* Sequentiell
+* Parallel
+    * Nebenläufig
+    * Echt-parallel
+* Interaktionen zwischen parallelen Programmen (i.e. Prozessen) können zu nicht-deterministischem Verhalten führen, sie beeinflussen sich gegenseitig:
     1. Kausale Beziehungen
     2. Kommunikation - Nachrichtenaustausch
     3. Koordinierung - Beziehung zw. Auftraggeber/-nehmer
@@ -16,6 +24,7 @@
 * Eigenschaften:
     1. Determiniertheit
     2. Störungsfreiheit
+        * Das Ergebnis wird unter Einhaltung einer festgelegten Ausführungsreihenfolge paralleler Ereignisse und deren Aktionen nicht beeinflusst.
     3. Wechselseitiger Ausschluss (mutual exclusion)
         * Sicherstellen v. exklusiver Verwendung von Resourcen
     4. Verklemmungsfreiheit

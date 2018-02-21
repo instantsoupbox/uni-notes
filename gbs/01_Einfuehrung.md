@@ -45,10 +45,11 @@ Hardware
 * Systemmodus (Kernel mode / space)
 
 ### Systemcalls
-Systemcalls als Schnittstelle für Anwendungen zum Zugriff auf die Hardware. Aufruf üblicherweise über **Systembibliotheken**, die zum Anwendungsprogramm (z.B. über Linker/Loader) hinzugebunden werden.
+Systemcalls dienen als Schnittstelle für Anwendungen zum Zugriff auf die Hardware. Aufruf üblicherweise über **Systembibliotheken**, die zum Anwendungsprogramm (z.B. über Linker/Loader) hinzugebunden werden.
 
 Ablauf:
-// todo
+`//todo`
+* **Trap-Befehl** realisiert einen Systemcall (Unterbrechung des aktuellen Ablaufs, Sprung in den BS-Kern)
 
 ## 1.5 Betriebssystem-Architekturen
 ### Monolithisches System
@@ -76,3 +77,4 @@ Ablauf:
     * Compiler, Linker, Loader
 
 ## 1.7 Betriebssystem, Assembler, Maschinenebene
+`//todo`
