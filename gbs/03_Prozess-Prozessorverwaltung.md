@@ -141,36 +141,44 @@ Implementierungsvarianten:
 
 
 ## 3.6 Scheduling
+
 ### Optimierungsziele
+
 * Alle:
-    * Fairness
-    * Balance
+    * Fairness: Fairer Anteil der CPU für jeden Prozess.
+    * Balance: Effektive Auslastung der System-Teile (I/O, CPU).
 * Batchsysteme
-    * Durchsatz (Maximierung)
+    * Durchsatz (Maximierung d. Anz. an Aufträgen)
     * Ausführungszeit (Minimierung)
-    * CPU-Belegung (Konstanthalten)
+    * CPU-Belegung (Konstanthalten d. Belegung)
 * Interaktive Systeme
     * Antwortzeit (Minimierung)
-    * Proportionalität 
+    * Proportionalität
 * Echtzeitsysteme
     * Halten v. Deadlines ()
     * Vorhersagbarkeit (Vermeidung v. Qualitätsverlusten)
 
 ### Scheduling-Kriterien
-`//todo`
+
+* Fairness vs. Priorität
+* I/O- vs. CPU-bound processes zur guten Auslastung
+* Wartezeit zur Vermeidung von Verhungern
+* CPU-Belegung vs. Durchsatz
 
 ### Scheduling-Klassen
-* **Non-preemptive**: P werden so lange ausgeführt, bis sie blockieren / die CPU freiwillig aufgeben.
-* **Preemptive**: P werden beim Auftreten von Ereignissen unterbrochen. 
+
+* **Non-preemptive**: P werden so lange ausgeführt, bis sie aufgrund von I/O-Operationen oder Synchronisationsmechanismen blockieren oder terminieren.
+* **Preemptive**: P werden beim Auftreten von Ereignissen unterbrochen. Rechnenden P kann also durch einen preemptive Scheduler die CPU entzogen und einem anderen rechenwilligen Prozess zugewiesen werden.
 
 ### Scheduling-Strategien
+
 * Batch-Systeme:
-    * FCFS (n-p.)
-    * SJF (n-p.)
-    * SRTN (p.)
+  * FCFS (n-p.)
+  * SJF (n-p.)
+  * SRTN (p.)
 * Interaktive Systeme:
-    * RR-Scheduling (p. nach Ablauf einer Zeitscheibe)
-    * Priority Scheduling ()
+  * RR-Scheduling (p. nach Ablauf einer Zeitscheibe)
+  * Priority Scheduling 
 * Echtzeit-Systeme:
-    * EDF
-    * RMS
+  * EDF
+  * RMS

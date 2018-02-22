@@ -10,7 +10,7 @@
     * **implizite Komm.** über *gemeinsame Betriebsmittel* (z.B. Speicher, Register, Dateien, Ringpuffer), aber keine Unterstützung durch das BS.
     * **explizite Komm.** über *dedizierte Interaktion mit dem BS*. wenn die beteiligten Prozesse in disjunkten Adressräumen liegen (message passing).
         * Kopplungsgrad:
-            * **synchron** (Synchronisation der Prozesse zur Übertragung, blockierend)
+            * **synchron** (Synchronisation der Prozesse zur Nachrichtenübertragung, blockierend)
             * **asynchron** (Entkopplung von Sender u. Empfänger, non-blocking)
         * Muster:
             * **Meldung** / Signal (unidirektional): Wenige 
