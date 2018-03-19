@@ -2,10 +2,14 @@
 
 Möglichkeiten der Abstraktion von Hardware-Details durch Interfaces, die unterschiedliche Software-Sichten auf die HW ermöglichen.
 
-* ISA (Instruction Set Architecture) zwischen BS und HW
+* ISA (Instruction Set Architecture) zwischen BS (Software) und HW
     * `User-ISA + System-ISA`
+    * `USER-ISA`: ISA, der für User-Space sichtbar/zugänglich ist
+    * Sicht für das BS auf das physische System
 * ABI (Application Binary Interface) zwischen Applikationen und BS
     * `Syscall-Interface + User-ISA`
+    * Erlaubt Zugriff auf BS und HW durch Applikationen
+    * Sicht für User Space Applikationen auf das physische System 
 
 **Virtuelle Laufzeitumgebung**
 * wird durch VM implementiert.
@@ -13,8 +17,8 @@ Möglichkeiten der Abstraktion von Hardware-Details durch Interfaces, die unters
 
 ## 11.2 System Virtual Maschines
 * **VMM (Virtual Machine Monitor / Hypervisor)** bietet Laufzeitumgebung für Betriebssysteme
-* Implementierung einer **virtuellen ISA** (User-/System ISA)
-    * Typ 1 VMM - Native System VM: Direkt auf HW
+* Durch Implementierung einer **virtuellen ISA** (User-/System ISA) erhalten wir eine Sicht auf eine virtuelle Maschine.
+    * Typ 1 VMM - Native System VM: Ausführung direkt auf HW
     * Typ 2 VMM - Hosted System VM: Verwendung v. Diensten d. Host BS
 * Vorteile:
     * Emulation von BS auf verschiedenen ISAs
@@ -22,14 +26,17 @@ Möglichkeiten der Abstraktion von Hardware-Details durch Interfaces, die unters
     * Security (?)
     * Bessere Ausschöpfung v. HW-Ressourcen
 * **VMI (Virtual Machine Introspection)**
-    * Kleinerer Angriffsvektor
-    * Höhere Privilegien
-    * Uneingeschränkte Sicht auf Zustand aller VMs
-    * des VMM im Vergleich zum BS-Kernel
+    * Idee: Verschiebung d. Security Mechanismen vom BS-Kern in den VMM, sodass Security Applikationen das System von außerhalb des BS analysieren u. schützen können.
+    * VMM hat im Vergleich zum BS-Kern
+        * Kleinerer Angriffsvektor
+        * Höhere Privilegien
+        * Uneingeschränkte Sicht auf Zustand aller VMs
+    * Malware kann keine Mechanismen auf BS-Kern Ebene umgehen oder deaktivieren, wenn die Security Mechanismen als Teil der VMM ausgeführt werden.
 * **Semantic Gap Problem**
-    * Binärzustand der VM (state of the VM) muss auf BS-Datenstrukturen abgebildet werden, dies erfordert zusätzliches **Semantisches Wissen**.
+    * Zustand einer VM besteht aus immensen Mengen an Binärinformationen.
+    * Dieser muss auf BS-Datenstrukturen abgebildet werden, um diese interpretieren zu können. Dies erfordert zusätzliches **Semantisches Wissen**.
 
-VMM kontrolliert und virtualisiert HW-Ressourcen des Systems.
+VMM kontrolliert und virtualisiert HW-Ressourcen des Systems (CPU, Memory.
 * CPU
 * Memory
 * I/O
@@ -45,7 +52,7 @@ VMM kontrolliert und virtualisiert HW-Ressourcen des Systems.
 * Ermöglichung d. Implemtation effizienter VMs
 
 **System-Mode**: Modus d. VMMs
-**User-Mode**: Modus d. Gast-BS, Instruktionen werden hier durch den VMM im System Mode abgefangen.
+**User-Mode**: Modus d. Gast-BS, Instruktionen werden hier durch den VMM im System Mode abgefangen, sodass VMM die Kontrolle über die VM behält
 
 **Instruktionsklassen** einer ISA:
 * Privileged Instructions: 
@@ -62,7 +69,7 @@ Ansatz 1: **SPT (Shadow Page Tables)**
 * Gast BS verwaltet Page Tables, die der MMU nicht bekannt sind.
 * VMM bildet in der SPT virtuelle Adressen d. VM auf physische Adressen ab.
 Ansatz 2: **SLAT (Second Level Address Translation)**
-* Zweite Stufe d. Address-Translation durch SLAT Tables
+* Zweite Stufe d. Address-Translation durch SLAT Tables (neben Page Tables).
 * SLAT Tables bildet Gast-Physische Adressen GPA auf Host-Physische-Adressen HPA ab
 * VMM fängt Zugriff auf Speicherbereich, der nicht in SLAT-Tables gemappt ist, ab.
 
@@ -110,7 +117,7 @@ Virtualisierungstechniken:
 A namespace wraps a global system resource in an abstraction that makes it appear to the processes within the namespace that they have their own isolated instance of the global resource. Changes to the global resource are visible to other processes that are members of
 the namespace, but are invisible to other processes. One use of namespaces is to implement containers.
 
-* Globale Verwaltung von Ressourcen in traditionellen Unix-basierten Systemen.
+* Globale Verwaltung von Ressourcen in traditionellen Unix-basierten Systemen. (Isolierung von Ressourcen)
 * Namespaces als Grundlage für **Container** zur Abstraktion auf globale Ressourcen des BS.
 * 6 Namespace-Typen
     * **UTS-Namespaces**
