@@ -40,11 +40,11 @@ Wenn es Transitionen gibt, die unabängig voneinander schalten können, dann gib
 
 Wenn es im Erreichbarkeitsgraphen Knoten gibt, aus denen keine Kanten führen, ist das Petri-Netz für diese Belegungen verklemmt.
 
-###**Lebendigkeit / liveliness**
+### **Lebendigkeit / liveliness**
 
 Für jede erreichbare Markierung M und für jede Transition t gibt es eine andere Markierung, die von M aus erreichbar und in der t transitionsbereit ist.
 
-###**Verklemmung / deadlock**
+### **Verklemmung / deadlock**
 
 * Vollständige Verklemmung: Von einer erreichbaren Markierung aus kann keine weitere Transition schalten
 * Lokale Verklemmung: Von einer erreichbaren Markierung aus gibt es eine Transition, sodass von dieser ausgehend keine Folgemarkierung erreichbar ist, in der diese transitionsbereit ist.
