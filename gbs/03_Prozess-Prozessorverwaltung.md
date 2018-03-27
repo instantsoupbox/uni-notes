@@ -7,7 +7,7 @@
 * Definition:
     * Programm in Ausführung
     * Zur Erfüllung seiner Aufgaben benötigt er Ressourcen
-    * Er besitzt seinen eigenen Prozessadressraum.
+    * Er besitzt seinen eigenen Prozessadressraum, besitzt nur exklusiven Zugriff auf seine eigenen Daten. Datenaustausch mit anderen Prozessen ist über BS-Dienste oder IPC möglich.
     * Prozesse gruppieren Ressourcen
         * Adressraum (Programmcode, Daten)
         * Gemeinsam nutzbare Ressourcen f. alle Threads eines Prozesses 
@@ -15,16 +15,16 @@
 ![Prozesszustände](img/prozess-zustd.png)
     * `add`: Neu erzeugter P wird zur Menge der rechenwilligen P hinzugefügt
     * `assign`: Als Folge eines Kontextwechsels wird dem P die CPU zugeordnet
-    * `block`: Aufgrund eines E/A-Aufrufs wird der P auf wartend gesetz
+    * `block`: Aufgrund eines E/A-Aufrufs wird der P auf wartend gesetzt
     * `ready`: P wechselt nach Beendigung der angestoßenen Operation in den Zustand rechenwillig
     * `resign`: Die CPU wird dem rechnenden P entzogen
     * `retire`: Der rechnende P terminiert
     * `swap out`: P wird auf die Festplatte ausgelagert
 * Thread
-    * Abstraktion eines physischen Prozesses
+    * Abstraktion eines physischen Prozesses (leichtgewichtiger Prozess)
     * Repräsentation nebenläufiger Ausführungspfade eines Rechensystems
-    * **Multi-threaded Prozess** besutzt mehrere Kontrollflüsse
-    * **T eines P teilen sich dessen Adressraum**
+    * **Multi-threaded Prozess** besitzt mehrere Kontrollflüsse. 
+    * **T eines P teilen sich dessen Adressraum**, läuft im Adressraum seines Prozesses ab.
     * **Jeder T besitzt seinen eigenen BZ**
 * **Thread-Kontext** mit thread-spezifischen Informationen:
     * PC
@@ -79,12 +79,18 @@
     * `kill` / Task-Manager
 
 ### Prozesshierarchie
-#### Prozesserzeugung unter UNIX
-* Initialisierung aller Subsysteme des Kernels, Erzeugung des ersten Userspace Prozesses `init`
-* **Prozessgruppe** PGID wird durch Prozess inkl. Kinder geformt
-* **Prozessgruppen-Leader** wird durch den Vater-Prozess der Prozessgruppe gebildet.
-* **Zombie-Prozess**: Kind terminiert vor dem Vater-Prozess und belegt aber noch einen Platz in der Prozesstabelle
-* **Waisen**: Vater terminiert vor dem Kind-Prozess und wird von `init`-Prozess adoptiert (`PPID = 1`)
+#### Prozesshierarchie unter UNIX
+
+Jeder Prozess bekommt eine eindeutige `PID` (Prozess-ID), die die P identifiziert.
+
+Jeder Prozess hat einen Vater-Prozess (außer `init`-Prozess mit `PID = 1` und `PPID = 0`), dieser wird durch die `PPID` verwaltet.
+
+Jeder Prozess formt mit seinen Kindern eine Prozessgruppe, beschrieben durch `PGID`. Der Vater-Prozess ist dann der Prozessgruppen-Leader.
+
+Anmerkungen:
+* Zuerst: Initialisierung aller Subsysteme des Kernels, dann Erzeugung des ersten Userspace Prozesses `init`. `init`-Prozess erzeugt einen Prozess pro Bildschirm zum Login, der dann eine `shell` erzeugt.
+* **Zombie**: Kind terminiert vor dem Vater-Prozess, Solange der Vaterprozess aktiv ist und nicht auf das Ende seines Kindes wartet, wird der Kindprozess zu einem Zombie, solange der Vater-Prozess aktiv ist. Das Kind belegt aber noch einen Platz in der Prozesstabelle. 
+* **Waisen**: Kind-Prozess wird zum Waisen, wenn Vater vor dem Kind-Prozess terminiert. Kind wird von `init`-Prozess adoptiert (`PPID = 1`).
 * **Dämon**: Hintergrundprozess
 
 #### Prozesserzeugung unter Windows
@@ -92,8 +98,8 @@
 * **Handle**-Zuordnung zu einem Prozess sobald er erstellt wird. Kontrolle des Kind-Prozesses über diesen möglich.
 
 ## 3.4 Dienste zur Prozessverwaltung
-* Dispatcher: Realisiert Prozess-Zstübergänge von rechenwillig nach rechnend
-* Scheduler: Auswahl eines Prozesses aus der Liste der rechenwilligen Prozesse (Run Queue) durch Scheduling Algorithmen
+* Dispatcher: Realisiert Prozess-Zstübergänge von rechenwillig nach rechnend. 
+* Scheduler: Auswahl eines Prozesses aus der Liste der rechenwilligen Prozesse (Run Queue) durch Scheduling Algorithmen. 
 
 ### Dispatching
 * Ein Dispatcher implementiert einen **Kontextwechsel**, also einen Zustandsübergang eines P's/T's **von rechnend nach rechenwillig**.
@@ -138,7 +144,6 @@ Implementierungsvarianten:
 ### Hybride Implementierung
 * Mapping von Kernel-Threads auf User-Threads.
 * BS-Kern verwaltet nur Kernel-Threads.
-
 
 ## 3.6 Scheduling
 
