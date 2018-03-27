@@ -2,53 +2,56 @@
 
 ## 4.2 Modellierung
 
-* **Race condition**:
-    * Mindestens 2 Prozesse greifen gleichzeitig unkoordiniert lesend/schreibend auf gemeinsame Ressource zu. 
-    * Das Ergebnis kann daher fehlerhaft sein, da die Ausführung nicht-deterministisch abläuft.
-    * Race conditions können durch mutual exclusion der konkurrierenden Aktionen vermieden werden. 
+### **Race condition**
+* Mindestens 2 Prozesse greifen gleichzeitig unkoordiniert lesend/schreibend auf gemeinsame Ressource zu. 
+* Da die Ausführung dann nicht-deterministisch ablaufen würde, kann das Ergebnis fehlerhaft sein.
+* Race conditions können durch mutual exclusion der konkurrierenden Aktionen vermieden werden. 
 
-* **Mutual exclusion**:
-    * Das Ziel ist es, deterministische Ergebnisse zu erhalten.
-    * Die Modifikationsoperationen müssen also sequentialisiert werden, indem sie wechselseitig ausgeschlossen ausgeführt werden.. 
-    * 
+### **Mutual exclusion**
+* Bei Konkurrenzsituationen paralleler Prozesse um exklusiv nutzbare Ressourcen muss eine deterministische Ausführung gewährleistet sein.
+* Die Modifikationsoperationen müssen also sequentialisiert werden, indem sie wechselseitig ausgeschlossen ausgeführt werden.
 
-* **Kritischer Abschnitt**:
-    * Ein Abschnitt, in dem Prozesse auf gemeinsame Ressourcen zugreifen und wechselseitig ausgeschlossen sind.
-    * Um Race conditions zu vermeiden, muss der Zugriff sequentialisiert werden.
-    * Phasen des kritischen Abschnitts:
-        1. Ausführung d. unkritischen Abs.
-        2. Betreten d. kritischen Abs.
-        3. Ausführung d. Transition des kritischen Abschnitts.
-        4. Verlassen d. kritischen Abschnitts.
+### **Kritischer Abschnitt**
+* Ein Abschnitt, in dem Prozesse auf gemeinsame Ressourcen zugreifen und wechselseitig ausgeschlossen sind.
+* Um Race conditions zu vermeiden, muss der Zugriff sequentialisiert werden.
+* Phasen des kritischen Abschnitts:
+    1. Ausführung d. unkritischen Abs.
+    2. Betreten d. kritischen Abs.
+    3. Ausführung d. Transition des kritischen Abschnitts.
+    4. Verlassen d. kritischen Abschnitts.
 
 ## 4.3 Koordinierungskonzepte
 
-* Lösungskonzepte auf
-    * HW-Ebene
-        * Deaktivieren v. Interrupts / Unterbrechungssperre (P kann ohne Unterbrechung seinen krit. Abs. ausführen.)
-        * Atomare Maschinenbefehle 
-    * Einfache BS-System-Dienste
-        * mit **aktivem Warten** (busy waiting): *Test-Set-Lock* (`TSL RX, LOCK`) - kontinuierliches Überprüfen einer Variable, bis ein bestimmter Wert auftaucht.
-        * mit **passivem Warten**: `sleep` und `wakeup`, um P in Zstd. wartend oder rechenbereit überzuführen
-    * BS-Konzepte auf höherem Abstraktionsniveau
-        * Semaphore
-            * *Ganzzahlige* Kontrollvariable
-            * Operationen:
-              * Initialisieren
-              * up `V`
-              * down `P`
-        * Mutex (binäre Semaphore)
-    * Programmiersprache
+### Lösungskonzepte
+#### Auf HW-Ebene
+* Realisierung von Wechselseitigem Ausschluss durch **Unterbrechungssperre / Deaktivieren v. Interrupts**, sodass ohne Unterbrechung seinen krit. Abs. ausführen kann.
+    * Nur bei Ein-Prozessor-Systemen
+    * Nur bei kurzen krit. Bereichen immerhalb von BS- / maschinennahen Programmen
+    * Nicht geeignet bei Benutzerprozessen
+* **Aktives Warten** (busy waiting): Atomare Maschinenbefehle 
+    * *Test-Set-Lock* (`TSL RX, LOCK`) - kontinuierliches Überprüfen einer Variable, bis ein bestimmter Wert auftaucht.
+    * Kann natürlich zum Deadlock führen, wenn die Prozesse auf einer 1-Prozessor CPU laufen.
 
-## 4.4 Deadlocks
-**Deadlock**: Zustand einer Menge von Prozessen, in der jeder Prozess auf ein Ereignis wartet, das nr ein anderer Prozess aus dieser Menge auslösen kann.
+#### Durch einfache BS-System-Dienste
+* **Passives Warten**:
+    * `sleep` und `wakeup`, um P in Zstd. wartend oder rechenbereit überzuführen
+    * Dieser blockierte P kann von einem anderen P wieder aktiviert werden, wenn die Voraussetzungen für das betreten d. kritischen Abschnitts erfüllt sind.
 
-**Deadlock-Bedingungen**:
-* **Mutual exclusion**: exklusiv nutzbare Ressource
-* **Hold-and-wait**: P, die bereits Ressource haben, belegen diese Ressource auch wenn sie noch weitere Ressourcen anfordern.
-* **No-preemption**: Zugeteilte Ressoucen können einem Prozess nicht entzogen werden.
-* **Circular wait**: Zyklische Kette von min. zwei P, die jeweils auf eine andere Ressource warten, die vom nächsten Prozess i.d. Kette belegt ist.
+#### BS-Konzepte auf höherem Abstraktionsniveau
+* Semaphore
+    * *Ganzzahlige* Kontrollvariable
+    * Operationen:
+        * Initialisieren
+        * up `V`
+        * down `P`
+* Mutex (binäre Semaphore)
 
+
+#### Programmiersprachen-Konzept
+**Monitor-Konzept** in Java:
+* Abkapselung der sich im kritischen Abschnitt befindenden Daten und die darauf definitierten Zugriffsaktionen in Einheit - dem Monitor.
+* Monitor stellt exklusive Nutzung seines INhalts sicher.
+* Aufruf des Monitor gleichbedeutend mit Sperrung des Monitors bis zum Verlassen des Monitors.
 
 ### Producer-consumer problem / Bounded-buffer problem
 
@@ -99,7 +102,7 @@ void consumer(void) {
 ```
 
 What is a better approach? This one with semaphores.
-The critical region that is just to be accessed by one process at a time is each encapsulated within a `down`- and `up`-call of our binary semaphore to maintain the mutual exclusion of the producer and consumer process.
+The critical region that is just to be accessed by one process at a time is each encapsulated within a `down`- and `up`-call of our binary semaphore to maintain the mutual exclusion of the producer and consumer processes.
 
 ```C
 #define N 100
@@ -162,23 +165,23 @@ Belegungsanforderungsgraph (Holt, 1972):
 
 ### Deadlock-Strategien
 Was tut das BS?
-1. Ignorieren
-2. Deadlock-Detection
-    * Erkennung
+1. **Ignorieren**
+2. **Detection**
+    * Erkennung, dann:
     * Beseitigung:
         * P-Abbruch, anschließend Neustart
         * R-Enzug
         * Zurückführung verklemmter Prozesse auf Checkpoint
         * *BUT*: Verlust durch Abbruch
-3. Deadlock-Avoidance
+3. **Avoidance**
     * BS führt keine Ressourcenzuteilung durch, die überhaupt in einem Deadlock enden könnte
-    * Bankier-Algorithmus (Dijkstra, 1965)
+    * **Bankier-Algorithmus** (Dijkstra, 1965)
     * *BUT*: Statisch, inflexibel, ineffizient
-4. Deadlock-Prevention
+4. **Prevention**
     * Außerkraftsetzen einer der Deadlock-Bedingungen
-    * Deadlock-frei by Design: Sicherstellen, dass mind. eine der vier Dealock-Bedingungen nicht erfüllt ist.
+    * **Deadlock-frei by Design**: Sicherstellen, dass mind. eine der vier Dealock-Bedingungen nicht erfüllt ist.
         1. Mutual Exclusion:
-            * Spooling: Nur der Spooler-Prozess hat als einziger die Ressource zugeteilt.
+            * **Spooling**: Nur ein Spooler-Prozess hat als einziger die Ressource zugeteilt.
             * Verwaltung d. Aufträge über Queue.
             * Indirekte Nutzung d. R über den Spooler.
         2. Hold-and-wait
