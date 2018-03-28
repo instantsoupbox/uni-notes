@@ -172,7 +172,7 @@ Verweis auf bereits existierende Datei im gleichen Dateisystem.
 
 ## Löschvorgang einer Datei unter UNIX
 1. Entferne den Eintrag der Datei aus dem Verzeichnis.
-2. Hard-Link löschen, Reference COunter dekrementieren
+2. Hard-Link löschen, Reference Counter dekrementieren
 3. Falls `Reference_Counter == 0`:
     * Freigabe des i-node in den Pool der freien i-nodes.
     * Markierung der durch die Datei belegten Blöcke als frei.

@@ -127,6 +127,8 @@ Implementierungsvarianten:
 * Kernel Space
 * Hybride Varianten (User- und Kernel-Space)
 
+Scheduler sollte die Thread-Zugehörigkeit zu Prozessen berücksichtigen, um Overhead für Kontextwechsel zu minimieren.
+
 ### User-level Threads
 * Der BS-Kern sieht nur single-threaded Prozesse.
 * Ein **Thread-Paket** (= **Laufzeitsystem**) implementiert die Operationen, die erforderlich sind um Threads zu realisieren.
@@ -136,10 +138,15 @@ Implementierungsvarianten:
     1. Kernel picks a process
     2. Runtime system picks a thread.
 * Der Kernel sieht also das Laufzeitsystem als einen Prozess, den er schedulen muss.
+* Kann also in OS implementiert werden, wo der BS-Kernel gar keine Threads supportet.
+* Schnelles thread-level Scheduling (weil nicht im Kernel mode).
+* Prozesse können ihren eigenen Scheduling-Algorithmus haben.
 
 ### Kernel-level Threads
 * BS-Kern verwaltet selbst die Threads und hat eine Threadtabelle für alle Threads im Kern. 
 * Thread Operationen führen zu einem Trap im Kern. 
+* BS-Kern wählt rechenwilligen Thread und kontrolliert CPU-Zuteilung an Threads.
+* Wenn ein Kernel-Level-Thread blockiert, so kann die CPU einem anderen Thread des gleichen Prozesses zugeordnet werden, ohne den gesamten Prozess aufzuhalten.
 
 ### Hybride Implementierung
 * Mapping von Kernel-Threads auf User-Threads.
@@ -158,17 +165,20 @@ Implementierungsvarianten:
     * CPU-Belegung (Konstanthalten d. Belegung)
 * Interaktive Systeme
     * Antwortzeit (Minimierung)
-    * Proportionalität
+    * Proportionalität (Berücksichtigung d. Erwartungshaltung von Benutzern)
 * Echtzeitsysteme
-    * Halten v. Deadlines ()
+    * Halten v. Deadlines (Vermeidung von Datenverlust)
     * Vorhersagbarkeit (Vermeidung v. Qualitätsverlusten)
 
 ### Scheduling-Kriterien
 
 * Fairness vs. Priorität
+    * Faire Verteilung d. CPU an alle Prozesse einer Klasse
+    * ABER: Höhere Priorisierung von Prozessen mit höherer Priorität
 * I/O- vs. CPU-bound processes zur guten Auslastung
 * Wartezeit zur Vermeidung von Verhungern
 * CPU-Belegung vs. Durchsatz
+    * Dauerhafte Belegung d. CPU nicht gleichbedeutend mit hohem Durchsatz.
 
 ### Scheduling-Klassen
 
@@ -183,7 +193,13 @@ Implementierungsvarianten:
   * SRTN (p.)
 * Interaktive Systeme:
   * RR-Scheduling (p. nach Ablauf einer Zeitscheibe)
-  * Priority Scheduling 
+  * Priority Scheduling (p.)
 * Echtzeit-Systeme:
-  * EDF
+  * EDF (Earliest-Deadline-First, p. oder n-p.)
   * RMS
+
+#### Soft Deadlines
+Es wird toleriert, dass nicht alle Deadlines eingehalten werden.
+
+#### Harte Deadlines
+Müssen eingehalten werden.

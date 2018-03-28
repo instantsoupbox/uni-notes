@@ -20,23 +20,28 @@ Wir werden jetzt System und Process Virtual Machines betrachten.
 ## 11.2 System Virtual Maschines
 * **VMM (Virtual Machine Monitor / Hypervisor)** bietet Laufzeitumgebung für Betriebssysteme
 * Durch Implementierung einer **virtuellen ISA** (User-/System ISA) erhalten wir eine Sicht auf eine virtuelle Maschine.
-    * Typ 1 VMM - Native System VM: Ausführung direkt auf HW
-    * Typ 2 VMM - Hosted System VM: Verwendung v. Diensten d. Host BS
-* Vorteile:
-    * Emulation von BS auf verschiedenen ISAs
-    * Isolierte Ausführung verschiedener BS auf der gleichen HW
-    * Security (?)
-    * Bessere Ausschöpfung v. HW-Ressourcen
-* **VMI (Virtual Machine Introspection)**
-    * Idee: Verschiebung d. Security Mechanismen vom BS-Kern in den VMM, sodass Security Applikationen das System von außerhalb des BS analysieren u. schützen können.
-    * VMM hat im Vergleich zum BS-Kern
-        * Kleinerer Angriffsvektor
-        * Höhere Privilegien
-        * Uneingeschränkte Sicht auf Zustand aller VMs
-    * Malware kann keine Mechanismen auf BS-Kern Ebene umgehen oder deaktivieren, wenn die Security Mechanismen als Teil der VMM ausgeführt werden.
-* **Semantic Gap Problem**
-    * Zustand einer VM besteht aus immensen Mengen an Binärinformationen.
-    * Dieser muss auf BS-Datenstrukturen abgebildet werden, um diese interpretieren zu können. Dies erfordert zusätzliches **Semantisches Wissen**.
+    * **Typ 1 VMM - Native System VM**: Ausführung direkt auf HW
+    * **Typ 2 VMM - Hosted System VM**: Verwendung v. Diensten d. Host BS
+
+### Vorteile:
+* Emulation von BS auf verschiedenen ISAs
+* Isolierte Ausführung verschiedener BS auf der gleichen HW
+* Security (Virtual Machine Introspection)
+* Bessere Ausschöpfung v. HW-Ressourcen
+
+### **VMI (Virtual Machine Introspection)**
+
+* Idee: Verschiebung d. Security Mechanismen vom BS-Kern in den VMM, sodass Security Applikationen das System von außerhalb des BS analysieren u. schützen können.
+* VMM hat im Vergleich zum BS-Kern
+    * Kleinerer Angriffsvektor
+    * Höhere Privilegien
+    * Uneingeschränkte Sicht auf Zustand aller VMs
+* Malware kann keine Mechanismen auf BS-Kern Ebene umgehen oder deaktivieren, wenn die Security Mechanismen als Teil der VMM ausgeführt werden.
+
+### **Semantic Gap Problem**
+
+* Zustand einer VM besteht aus immensen Mengen an Binärinformationen.
+* Dieser muss auf BS-Datenstrukturen abgebildet werden, um diese interpretieren zu können. Dies erfordert zusätzliches **Semantisches Wissen**.
 
 VMM kontrolliert und virtualisiert HW-Ressourcen des Systems (CPU, Memory.
 * CPU
@@ -67,9 +72,11 @@ VMM kontrolliert und virtualisiert HW-Ressourcen des Systems (CPU, Memory.
 
 ### Memory Virtualisierung
 VMM teilt und isoliert den physischen Speicher zwischen den VMs.
+
 Ansatz 1: **SPT (Shadow Page Tables)**
 * Gast BS verwaltet Page Tables, die der MMU nicht bekannt sind.
 * VMM bildet in der SPT virtuelle Adressen d. VM auf physische Adressen ab.
+
 Ansatz 2: **SLAT (Second Level Address Translation)**
 * Zweite Stufe d. Address-Translation durch SLAT Tables (neben Page Tables).
 * SLAT Tables bildet Gast-Physische Adressen GPA auf Host-Physische-Adressen HPA ab
@@ -91,13 +98,14 @@ Virtualisierungstechniken:
     * I/O MMU verwaltet Geräte-Speicher in Gast VMs
 
 ## 11.3 Process Virtual Machines
-* Implementierung einer 
+* VMM implementiert eine 
     * **virtuelle Laufzeitumgebung** für User-Space-Prozesse
     * **ABI** zwischen Applikationen und BS bestehend aus Systemcall-Interface und User ISA
-* Vorteile: 
-    * Emulation von Programmen auf unterschiedlichen BS
-    * Platformunabhängigkeit: Ausführung von Programmen auf verschiedenen BS
-    * Performance-Optimierung:
+
+### Vorteile: 
+* Emulation von Programmen auf unterschiedlichen BS
+* Platformunabhängigkeit: Ausführung von Programmen auf verschiedenen BS
+* Performance-Optimierung: Binary Optimizer können den Code während der Laufzeit optimieren.
 
 ### High-level-Language VMs
 * Definition einer platform-unabhängigen virtuellen ISA.

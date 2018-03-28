@@ -68,29 +68,23 @@ Betriebsziele:
 Systemcalls dienen als Schnittstelle für Anwendungen zum Zugriff auf die Hardware/den BS-Kern. Aufruf üblicherweise über **Systembibliotheken**, die zum Anwendungsprogramm (z.B. über Linker/Loader) hinzugebunden werden.
 
 Ablauf:
-1. Anwendungsprogramm ruft Bibliotheksfunktion auf.
+1. Anwendungsprogramm ruft **Bibliotheksfunktion** auf.
 2. Bibliotheksfunktion ruft den eigentlichen Syscall auf.
-3. Unterbrechung d. aktuellen Ablaufs und Sprung in den BS-Kern durch Trap-Befehl.
+3. **Trap-Call**: Unterbrechung d. aktuellen Ablaufs, Sprung in den BS-Kern.
 4. Ausführung d. Syscalls im Kernel-Mode.
 
 **Trap-Befehl** realisiert einen Systemcall (Unterbrechung des aktuellen Ablaufs, Sprung in den BS-Kern)
 
 ## 1.5 Betriebssystem-Architekturen
 ### Monolithisches System
-* **Betriebssystem-Kern** umfasst die vollständige Menge an Funktionen des BS
-* Alle Treiber im Kern implementiert
-* Kern kann durch Systemcalls betreten werden.
+* Alle BS-Funktionen sind im **Betriebssystem-Kern** zusammengefasst und laufen im Kernel Space ab.
+* Alle Treiber im Kern implementiert.
+* Der Kern kann durch Systemcalls betreten werden.
 
 ### Mikrokerne
-* Aufteilung der Funktionen des BS in Module, nur eines davon - der **Mikrokern** - läuft im Kernel Mode.
-* Mikrokern bietet nur Basismechanismen:
-    * IPC
-    * Scheduling
-* Subsysteme als Systemdienste im User Mode:
-    * Dateisystem
-    * Speicherverwaltung
-    * Prozessverwaltung
-* Systemfunktionen als **Serverprozesse**
+* Im Mikrokern sind nur Basismechanismen wie Scheduling und IPC implementiert. Nur der Mikrokern läuft im Kernel Mode.
+* Alle anderen Funktionen des BS, wie Speicherverwaltung, Dateisysteme und Prozessverwaltung sind in Subsysteme im Usermode ausgelagert. 
+* (Systemfunktionen als **Serverprozesse**)
 
 ## 1.6 Systemprogrammierung
 * **Systemprogrammierung**: Konstruktion von Algorithmen für ein Rechensystem
