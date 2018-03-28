@@ -129,6 +129,8 @@ The basic idea behind virtual memory is that each program has its own address sp
 * Eine Page-Table kann sehr groß sein und daher im HS viel Platz belegen. 
 * Lösung: Mehrstufige Page-Table
 
+![2-stufige Page Table](img/page_table.png)
+
 ### Page Fault (= Seitenfehler)
 * **Auslöser: `P`-Bit im Eintrag ist nicht gesetzt.**
 1. Interrupt-Auslösung durch HW
